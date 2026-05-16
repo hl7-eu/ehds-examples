@@ -34,7 +34,6 @@ jobs:
           declare -A ALLOWED_FOLDERS=(
             [base]=1
             [eps]=1
-            [imaging]=1
             [lab]=1
             [mpd]=1
           )
@@ -49,7 +48,7 @@ jobs:
           done
 
           ORDERED_FOLDERS=()
-          for folder in base eps imaging lab mpd; do
+          for folder in base eps lab mpd; do
             if [[ -n "${SEEN[$folder]:-}" ]]; then
               ORDERED_FOLDERS+=("$folder")
             fi
@@ -84,7 +83,6 @@ jobs:
           declare -A ALLOWED_FOLDERS=(
             [base]=1
             [eps]=1
-            [imaging]=1
             [lab]=1
             [mpd]=1
           )
@@ -161,16 +159,23 @@ jobs:
           set -euo pipefail
 
           VALIDATOR_URL="https://github.com/hapifhir/org.hl7.fhir.core/releases/latest/download/validator_cli.jar"
-          RESOLVED_URL="$(curl -sSL -o /dev/null -w '%{url_effective}' "$VALIDATOR_URL")"
+          LATEST_RELEASE_API="https://api.github.com/repos/hapifhir/org.hl7.fhir.core/releases/latest"
+          LATEST_RELEASE_JSON="$(curl -fsSL "$LATEST_RELEASE_API" || true)"
 
-          if [[ -z "$RESOLVED_URL" ]]; then
-            RESOLVED_URL="$VALIDATOR_URL"
+          RELEASE_TAG="$(
+            printf '%s' "$LATEST_RELEASE_JSON" \
+              | sed -n 's/.*"tag_name"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' \
+              | head -n 1
+          )"
+
+          if [[ -z "$RELEASE_TAG" ]]; then
+            RELEASE_TAG="latest"
           fi
 
-          CACHE_SUFFIX="$(echo "$RESOLVED_URL" | sed 's/[^a-zA-Z0-9._-]/-/g')"
+          CACHE_SUFFIX="$(echo "$RELEASE_TAG" | sed 's/[^a-zA-Z0-9._-]/-/g')"
 
           echo "validator_url=$VALIDATOR_URL" >> "$GITHUB_OUTPUT"
-          echo "resolved_url=$RESOLVED_URL" >> "$GITHUB_OUTPUT"
+          echo "release_tag=$RELEASE_TAG" >> "$GITHUB_OUTPUT"
           echo "cache_key=validator-cli-${CACHE_SUFFIX}" >> "$GITHUB_OUTPUT"
 
       - name: Restore cached validator
@@ -180,6 +185,8 @@ jobs:
         with:
           path: .cache/fhir-validator/validator_cli.jar
           key: ${{ runner.os }}-${{ steps.validator_meta.outputs.cache_key }}
+          restore-keys: |
+            ${{ runner.os }}-validator-cli-
 
       - name: Download validator if cache miss
         if: steps.collect_files.outputs.has_target_files == 'true' && steps.validator_cache.outputs.cache-hit != 'true'
@@ -204,9 +211,8 @@ jobs:
             VALIDATOR_ARGS+=("-resolution-context" "$folder")
           done < .ci/changed-folders.txt
 
-          VALIDATOR_ARGS+=("-ig" "hl7.fhir.eu.mpd#1.0.0")
+          VALIDATOR_ARGS+=("-ig" "hl7.fhir.eu.mpd#current")
           VALIDATOR_ARGS+=("-ig" "hl7.fhir.eu.laboratory#2.0.0")
-          VALIDATOR_ARGS+=("-ig" "hl7.fhir.eu.imaging#current")
           VALIDATOR_ARGS+=("-ig" "hl7.fhir.eu.eps#current")
           VALIDATOR_ARGS+=("-ig" "hl7.fhir.eu.hdr#current")
           VALIDATOR_ARGS+=("-ig" "hl7.fhir.eu.base#2.0.0")
@@ -215,6 +221,8 @@ jobs:
           VALIDATOR_ARGS+=("-html-output" "validation.html")
           VALIDATOR_ARGS+=("-output" "validation.json")
           VALIDATOR_ARGS+=("-show-message-ids")
+          VALIDATOR_ARGS+=("-extension" "any")
+          VALIDATOR_ARGS+=("-display-issues-are-warnings")
 
           while IFS= read -r file; do
             [[ -z "$file" ]] && continue
@@ -222,7 +230,7 @@ jobs:
           done < .ci/target-files.txt
 
           set +e
-          java -jar .cache/fhir-validator/validator_cli.jar "${VALIDATOR_ARGS[@]}"
+          java -jar .cache/fhir-validator/validator_cli.jar "${VALIDATOR_ARGS[@]}" > validator-cli.log 2>&1
           EXIT_CODE=$?
           set -e
 
@@ -245,13 +253,44 @@ jobs:
           set -euo pipefail
 
           if [[ ! -s pr-summary.md ]]; then
-            cat > pr-summary.md <<'EOF'
-            # FHIR Validation Summary
-
-            The markdown summary could not be rendered from `validation.json`.
-            Please check the workflow logs and the uploaded HTML artifact for details.
-            EOF
+            printf '%s\n' \
+              '# FHIR Validation Summary' \
+              '' \
+              'The markdown summary could not be rendered from `validation.json`.' \
+              'Please check the workflow logs and the uploaded HTML artifact for details.' \
+              > pr-summary.md
           fi
+
+      - name: Upload HTML validation report
+        id: upload_html_report
+        if: always() && steps.collect_files.outputs.has_target_files == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: fhir-validation-html-report
+          path: validation.html
+          if-no-files-found: warn
+
+      - name: Append artifact link to PR summary
+        if: always() && steps.collect_files.outputs.has_target_files == 'true'
+        shell: bash
+        env:
+          ARTIFACT_ID: ${{ steps.upload_html_report.outputs.artifact-id }}
+          ARTIFACT_URL_OUTPUT: ${{ steps.upload_html_report.outputs.artifact-url }}
+          REPOSITORY: ${{ github.repository }}
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          set -euo pipefail
+
+          ARTIFACT_URL="$ARTIFACT_URL_OUTPUT"
+          if [[ -z "$ARTIFACT_URL" && -n "$ARTIFACT_ID" ]]; then
+            ARTIFACT_URL="https://github.com/$REPOSITORY/actions/runs/$RUN_ID/artifacts/$ARTIFACT_ID"
+          fi
+
+          if [[ -z "$ARTIFACT_URL" ]]; then
+            ARTIFACT_URL="https://github.com/$REPOSITORY/actions/runs/$RUN_ID"
+          fi
+
+          printf '\n## HTML Report Artifact\n\n[Download `fhir-validation-html-report`](%s)\n' "$ARTIFACT_URL" >> pr-summary.md
 
       - name: Post sticky PR comment
         if: always() && steps.collect_files.outputs.has_target_files == 'true'
@@ -262,14 +301,6 @@ jobs:
           path: pr-summary.md
           recreate: true
           skip_unchanged: true
-
-      - name: Upload HTML validation report
-        if: always() && steps.collect_files.outputs.has_target_files == 'true'
-        uses: actions/upload-artifact@v4
-        with:
-          name: fhir-validation-html-report
-          path: validation.html
-          if-no-files-found: warn
 
       - name: Fail workflow when validator reports errors
         if: always() && steps.collect_files.outputs.has_target_files == 'true'

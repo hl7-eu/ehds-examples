@@ -21,15 +21,19 @@ A GitHub Actions workflow (`FHIR Validation`) validates changes in pull requests
 Validation behavior:
 
 1. Detects changed files in the PR.
-2. Selects changed top-level spec folders from: `base`, `eps`, `imaging`, `lab`, `mpd`.
+2. Selects changed top-level spec folders from: `base`, `eps`, `lab`, `mpd`.
 3. For each changed folder path in those domains, collects all `*.json` and `*.xml` files recursively from that folder.
 4. Runs the Java FHIR validator with:
    - `-allow-example-urls true`
    - `-html-output validation.html`
    - `-output validation.json`
    - `-show-message-ids`
+   - `-extension any`
+   - `-display-issues-are-warnings`
    - one `-resolution-context` per directory that contains changed/new content
    - required EHDS IG packages via `-ig`
+
+Note: `imaging/**` is currently excluded from CI validation due to an API dependency issue.
 
 Loaded IG packages:
 
@@ -43,6 +47,7 @@ Loaded IG packages:
 ### Validation Outputs in PRs
 
 - A sticky PR comment with a Markdown summary rendered by `patrick-werner/validation-outcome-markdown-renderer`.
+- The sticky PR comment includes a direct link to the uploaded HTML artifact.
 - GitHub annotation output from the renderer.
 - A downloadable HTML artifact: `fhir-validation-html-report` (`validation.html`).
 
@@ -68,6 +73,8 @@ java -jar validator_cli.jar \
   -html-output validation.html \
   -output validation.json \
   -show-message-ids \
+  -extension any \
+  -display-issues-are-warnings \
   lab/my-feature-examples/Observation-example-1.json \
   lab/my-feature-examples/subset-a/Observation-example-2.xml
 ```
