@@ -161,16 +161,23 @@ jobs:
           set -euo pipefail
 
           VALIDATOR_URL="https://github.com/hapifhir/org.hl7.fhir.core/releases/latest/download/validator_cli.jar"
-          RESOLVED_URL="$(curl -sSL -o /dev/null -w '%{url_effective}' "$VALIDATOR_URL")"
+          LATEST_RELEASE_API="https://api.github.com/repos/hapifhir/org.hl7.fhir.core/releases/latest"
+          LATEST_RELEASE_JSON="$(curl -fsSL "$LATEST_RELEASE_API" || true)"
 
-          if [[ -z "$RESOLVED_URL" ]]; then
-            RESOLVED_URL="$VALIDATOR_URL"
+          RELEASE_TAG="$(
+            printf '%s' "$LATEST_RELEASE_JSON" \
+              | sed -n 's/.*"tag_name"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' \
+              | head -n 1
+          )"
+
+          if [[ -z "$RELEASE_TAG" ]]; then
+            RELEASE_TAG="latest"
           fi
 
-          CACHE_SUFFIX="$(echo "$RESOLVED_URL" | sed 's/[^a-zA-Z0-9._-]/-/g')"
+          CACHE_SUFFIX="$(echo "$RELEASE_TAG" | sed 's/[^a-zA-Z0-9._-]/-/g')"
 
           echo "validator_url=$VALIDATOR_URL" >> "$GITHUB_OUTPUT"
-          echo "resolved_url=$RESOLVED_URL" >> "$GITHUB_OUTPUT"
+          echo "release_tag=$RELEASE_TAG" >> "$GITHUB_OUTPUT"
           echo "cache_key=validator-cli-${CACHE_SUFFIX}" >> "$GITHUB_OUTPUT"
 
       - name: Restore cached validator
@@ -180,6 +187,8 @@ jobs:
         with:
           path: .cache/fhir-validator/validator_cli.jar
           key: ${{ runner.os }}-${{ steps.validator_meta.outputs.cache_key }}
+          restore-keys: |
+            ${{ runner.os }}-validator-cli-
 
       - name: Download validator if cache miss
         if: steps.collect_files.outputs.has_target_files == 'true' && steps.validator_cache.outputs.cache-hit != 'true'
@@ -245,12 +254,12 @@ jobs:
           set -euo pipefail
 
           if [[ ! -s pr-summary.md ]]; then
-            cat > pr-summary.md <<'EOF'
-            # FHIR Validation Summary
-
-            The markdown summary could not be rendered from `validation.json`.
-            Please check the workflow logs and the uploaded HTML artifact for details.
-            EOF
+            printf '%s\n' \
+              '# FHIR Validation Summary' \
+              '' \
+              'The markdown summary could not be rendered from `validation.json`.' \
+              'Please check the workflow logs and the uploaded HTML artifact for details.' \
+              > pr-summary.md
           fi
 
       - name: Post sticky PR comment
