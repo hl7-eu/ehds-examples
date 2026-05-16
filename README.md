@@ -47,6 +47,7 @@ Loaded IG packages:
 ### Validation Outputs in PRs
 
 - A sticky PR comment with a Markdown summary rendered by `patrick-werner/validation-outcome-markdown-renderer`.
+- The sticky PR comment includes a direct link to the uploaded HTML artifact.
 - GitHub annotation output from the renderer.
 - A downloadable HTML artifact: `fhir-validation-html-report` (`validation.html`).
 

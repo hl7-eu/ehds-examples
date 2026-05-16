@@ -230,7 +230,7 @@ jobs:
           done < .ci/target-files.txt
 
           set +e
-          java -jar .cache/fhir-validator/validator_cli.jar "${VALIDATOR_ARGS[@]}"
+          java -jar .cache/fhir-validator/validator_cli.jar "${VALIDATOR_ARGS[@]}" > validator-cli.log 2>&1
           EXIT_CODE=$?
           set -e
 
@@ -261,6 +261,37 @@ jobs:
               > pr-summary.md
           fi
 
+      - name: Upload HTML validation report
+        id: upload_html_report
+        if: always() && steps.collect_files.outputs.has_target_files == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: fhir-validation-html-report
+          path: validation.html
+          if-no-files-found: warn
+
+      - name: Append artifact link to PR summary
+        if: always() && steps.collect_files.outputs.has_target_files == 'true'
+        shell: bash
+        env:
+          ARTIFACT_ID: ${{ steps.upload_html_report.outputs.artifact-id }}
+          ARTIFACT_URL_OUTPUT: ${{ steps.upload_html_report.outputs.artifact-url }}
+          REPOSITORY: ${{ github.repository }}
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          set -euo pipefail
+
+          ARTIFACT_URL="$ARTIFACT_URL_OUTPUT"
+          if [[ -z "$ARTIFACT_URL" && -n "$ARTIFACT_ID" ]]; then
+            ARTIFACT_URL="https://github.com/$REPOSITORY/actions/runs/$RUN_ID/artifacts/$ARTIFACT_ID"
+          fi
+
+          if [[ -z "$ARTIFACT_URL" ]]; then
+            ARTIFACT_URL="https://github.com/$REPOSITORY/actions/runs/$RUN_ID"
+          fi
+
+          printf '\n## HTML Report Artifact\n\n[Download `fhir-validation-html-report`](%s)\n' "$ARTIFACT_URL" >> pr-summary.md
+
       - name: Post sticky PR comment
         if: always() && steps.collect_files.outputs.has_target_files == 'true'
         continue-on-error: true
@@ -270,14 +301,6 @@ jobs:
           path: pr-summary.md
           recreate: true
           skip_unchanged: true
-
-      - name: Upload HTML validation report
-        if: always() && steps.collect_files.outputs.has_target_files == 'true'
-        uses: actions/upload-artifact@v4
-        with:
-          name: fhir-validation-html-report
-          path: validation.html
-          if-no-files-found: warn
 
       - name: Fail workflow when validator reports errors
         if: always() && steps.collect_files.outputs.has_target_files == 'true'
