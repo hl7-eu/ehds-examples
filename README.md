@@ -28,6 +28,8 @@ Validation behavior:
    - `-html-output validation.html`
    - `-output validation.json`
    - `-show-message-ids`
+   - `-extension any`
+   - `-display-issues-are-warnings`
    - one `-resolution-context` per directory that contains changed/new content
    - required EHDS IG packages via `-ig`
 
@@ -70,6 +72,8 @@ java -jar validator_cli.jar \
   -html-output validation.html \
   -output validation.json \
   -show-message-ids \
+  -extension any \
+  -display-issues-are-warnings \
   lab/my-feature-examples/Observation-example-1.json \
   lab/my-feature-examples/subset-a/Observation-example-2.xml
 ```

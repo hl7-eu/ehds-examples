@@ -221,6 +221,8 @@ jobs:
           VALIDATOR_ARGS+=("-html-output" "validation.html")
           VALIDATOR_ARGS+=("-output" "validation.json")
           VALIDATOR_ARGS+=("-show-message-ids")
+          VALIDATOR_ARGS+=("-extension" "any")
+          VALIDATOR_ARGS+=("-display-issues-are-warnings")
 
           while IFS= read -r file; do
             [[ -z "$file" ]] && continue
