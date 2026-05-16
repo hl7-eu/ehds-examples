@@ -21,7 +21,7 @@ A GitHub Actions workflow (`FHIR Validation`) validates changes in pull requests
 Validation behavior:
 
 1. Detects changed files in the PR.
-2. Selects changed top-level spec folders from: `base`, `eps`, `imaging`, `lab`, `mpd`.
+2. Selects changed top-level spec folders from: `base`, `eps`, `lab`, `mpd`.
 3. For each changed folder path in those domains, collects all `*.json` and `*.xml` files recursively from that folder.
 4. Runs the Java FHIR validator with:
    - `-allow-example-urls true`
@@ -30,6 +30,8 @@ Validation behavior:
    - `-show-message-ids`
    - one `-resolution-context` per directory that contains changed/new content
    - required EHDS IG packages via `-ig`
+
+Note: `imaging/**` is currently excluded from CI validation due to an API dependency issue.
 
 Loaded IG packages:
 

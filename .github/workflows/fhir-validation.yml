@@ -34,7 +34,6 @@ jobs:
           declare -A ALLOWED_FOLDERS=(
             [base]=1
             [eps]=1
-            [imaging]=1
             [lab]=1
             [mpd]=1
           )
@@ -49,7 +48,7 @@ jobs:
           done
 
           ORDERED_FOLDERS=()
-          for folder in base eps imaging lab mpd; do
+          for folder in base eps lab mpd; do
             if [[ -n "${SEEN[$folder]:-}" ]]; then
               ORDERED_FOLDERS+=("$folder")
             fi
@@ -84,7 +83,6 @@ jobs:
           declare -A ALLOWED_FOLDERS=(
             [base]=1
             [eps]=1
-            [imaging]=1
             [lab]=1
             [mpd]=1
           )
