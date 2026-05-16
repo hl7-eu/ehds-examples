@@ -1,0 +1,286 @@
+name: FHIR Validation
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  validate:
+    name: FHIR Validation
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect changed spec folders
+        id: detect_changed_folders
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          BASE_SHA="${{ github.event.pull_request.base.sha }}"
+          HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+
+          echo "Comparing changes between $BASE_SHA and $HEAD_SHA"
+          mapfile -t CHANGED_FILES < <(git diff --name-only "$BASE_SHA" "$HEAD_SHA" || true)
+
+          declare -A ALLOWED_FOLDERS=(
+            [base]=1
+            [eps]=1
+            [imaging]=1
+            [lab]=1
+            [mpd]=1
+          )
+          declare -A SEEN=()
+
+          for path in "${CHANGED_FILES[@]}"; do
+            [[ -z "$path" ]] && continue
+            top_level="${path%%/*}"
+            if [[ -n "${ALLOWED_FOLDERS[$top_level]:-}" ]]; then
+              SEEN["$top_level"]=1
+            fi
+          done
+
+          ORDERED_FOLDERS=()
+          for folder in base eps imaging lab mpd; do
+            if [[ -n "${SEEN[$folder]:-}" ]]; then
+              ORDERED_FOLDERS+=("$folder")
+            fi
+          done
+
+          if [[ ${#ORDERED_FOLDERS[@]} -eq 0 ]]; then
+            echo "No changed files in tracked spec folders."
+            echo "has_changed_folders=false" >> "$GITHUB_OUTPUT"
+            echo "changed_folders=" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          CHANGED_FOLDER_LIST="${ORDERED_FOLDERS[*]}"
+          echo "Changed spec folders: $CHANGED_FOLDER_LIST"
+          echo "has_changed_folders=true" >> "$GITHUB_OUTPUT"
+          echo "changed_folders=$CHANGED_FOLDER_LIST" >> "$GITHUB_OUTPUT"
+
+      - name: Collect FHIR files in changed folders
+        id: collect_files
+        if: steps.detect_changed_folders.outputs.has_changed_folders == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mkdir -p .ci
+          : > .ci/target-files.txt
+          : > .ci/changed-folders.txt
+
+          BASE_SHA="${{ github.event.pull_request.base.sha }}"
+          HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+
+          declare -A ALLOWED_FOLDERS=(
+            [base]=1
+            [eps]=1
+            [imaging]=1
+            [lab]=1
+            [mpd]=1
+          )
+          declare -A SEEN_CONTEXTS=()
+          declare -A SEEN_FILES=()
+
+          # First pass: collect changed directories inside tracked top-level folders.
+          while IFS= read -r path; do
+            [[ -z "$path" ]] && continue
+
+            top_level="${path%%/*}"
+            if [[ -z "${ALLOWED_FOLDERS[$top_level]:-}" ]]; then
+              continue
+            fi
+
+            context_dir="$(dirname "$path")"
+            if [[ -n "$context_dir" && -z "${SEEN_CONTEXTS[$context_dir]:-}" ]]; then
+              echo "$context_dir" >> .ci/changed-folders.txt
+              SEEN_CONTEXTS["$context_dir"]=1
+            fi
+          done < <(git diff --name-only "$BASE_SHA" "$HEAD_SHA" || true)
+
+          if [[ ! -s .ci/changed-folders.txt ]]; then
+            echo "No changed folders found in tracked spec folders."
+            echo "has_target_files=false" >> "$GITHUB_OUTPUT"
+            echo "target_file_count=0" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          FILE_COUNT=0
+          # Second pass: validate all JSON/XML files in each changed directory (recursive).
+          while IFS= read -r context_dir; do
+            [[ -z "$context_dir" ]] && continue
+
+            while IFS= read -r file; do
+              [[ -z "$file" ]] && continue
+              if [[ -n "${SEEN_FILES[$file]:-}" ]]; then
+                continue
+              fi
+              echo "$file" >> .ci/target-files.txt
+              SEEN_FILES["$file"]=1
+              FILE_COUNT=$((FILE_COUNT + 1))
+            done < <(find "$context_dir" -type f \( -name '*.json' -o -name '*.xml' \) | sort)
+          done < .ci/changed-folders.txt
+
+          if [[ $FILE_COUNT -eq 0 ]]; then
+            echo "No JSON/XML files found in changed folders of tracked spec folders."
+            echo "has_target_files=false" >> "$GITHUB_OUTPUT"
+            echo "target_file_count=0" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "Collected $FILE_COUNT file(s) for validation from changed folder(s)."
+          echo "has_target_files=true" >> "$GITHUB_OUTPUT"
+          echo "target_file_count=$FILE_COUNT" >> "$GITHUB_OUTPUT"
+
+      - name: Skip summary when there is nothing to validate
+        if: steps.detect_changed_folders.outputs.has_changed_folders != 'true' || steps.collect_files.outputs.has_target_files != 'true'
+        run: |
+          echo "No relevant FHIR JSON/XML changes were detected in tracked spec folders. Validation skipped." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Set up Java
+        if: steps.collect_files.outputs.has_target_files == 'true'
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Resolve validator download URL
+        id: validator_meta
+        if: steps.collect_files.outputs.has_target_files == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          VALIDATOR_URL="https://github.com/hapifhir/org.hl7.fhir.core/releases/latest/download/validator_cli.jar"
+          RESOLVED_URL="$(curl -sSL -o /dev/null -w '%{url_effective}' "$VALIDATOR_URL")"
+
+          if [[ -z "$RESOLVED_URL" ]]; then
+            RESOLVED_URL="$VALIDATOR_URL"
+          fi
+
+          CACHE_SUFFIX="$(echo "$RESOLVED_URL" | sed 's/[^a-zA-Z0-9._-]/-/g')"
+
+          echo "validator_url=$VALIDATOR_URL" >> "$GITHUB_OUTPUT"
+          echo "resolved_url=$RESOLVED_URL" >> "$GITHUB_OUTPUT"
+          echo "cache_key=validator-cli-${CACHE_SUFFIX}" >> "$GITHUB_OUTPUT"
+
+      - name: Restore cached validator
+        if: steps.collect_files.outputs.has_target_files == 'true'
+        id: validator_cache
+        uses: actions/cache@v4
+        with:
+          path: .cache/fhir-validator/validator_cli.jar
+          key: ${{ runner.os }}-${{ steps.validator_meta.outputs.cache_key }}
+
+      - name: Download validator if cache miss
+        if: steps.collect_files.outputs.has_target_files == 'true' && steps.validator_cache.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mkdir -p .cache/fhir-validator
+          curl -fsSL "${{ steps.validator_meta.outputs.validator_url }}" -o .cache/fhir-validator/validator_cli.jar
+
+      - name: Run Java FHIR validator
+        id: run_validator
+        if: steps.collect_files.outputs.has_target_files == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          declare -a VALIDATOR_ARGS=()
+
+          while IFS= read -r folder; do
+            [[ -z "$folder" ]] && continue
+            VALIDATOR_ARGS+=("-resolution-context" "$folder")
+          done < .ci/changed-folders.txt
+
+          VALIDATOR_ARGS+=("-ig" "hl7.fhir.eu.mpd#1.0.0")
+          VALIDATOR_ARGS+=("-ig" "hl7.fhir.eu.laboratory#2.0.0")
+          VALIDATOR_ARGS+=("-ig" "hl7.fhir.eu.imaging#current")
+          VALIDATOR_ARGS+=("-ig" "hl7.fhir.eu.eps#current")
+          VALIDATOR_ARGS+=("-ig" "hl7.fhir.eu.hdr#current")
+          VALIDATOR_ARGS+=("-ig" "hl7.fhir.eu.base#2.0.0")
+
+          VALIDATOR_ARGS+=("-allow-example-urls" "true")
+          VALIDATOR_ARGS+=("-html-output" "validation.html")
+          VALIDATOR_ARGS+=("-output" "validation.json")
+          VALIDATOR_ARGS+=("-show-message-ids")
+
+          while IFS= read -r file; do
+            [[ -z "$file" ]] && continue
+            VALIDATOR_ARGS+=("$file")
+          done < .ci/target-files.txt
+
+          set +e
+          java -jar .cache/fhir-validator/validator_cli.jar "${VALIDATOR_ARGS[@]}"
+          EXIT_CODE=$?
+          set -e
+
+          echo "validator_exit_code=$EXIT_CODE" >> "$GITHUB_OUTPUT"
+
+      - name: Render validation summary
+        id: render_summary
+        if: steps.collect_files.outputs.has_target_files == 'true'
+        continue-on-error: true
+        uses: patrick-werner/validation-outcome-markdown-renderer@v1
+        with:
+          bundle-file: validation.json
+          include: warnings
+          pr-summary-path: pr-summary.md
+
+      - name: Ensure PR summary exists
+        if: always() && steps.collect_files.outputs.has_target_files == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ ! -s pr-summary.md ]]; then
+            cat > pr-summary.md <<'EOF'
+            # FHIR Validation Summary
+
+            The markdown summary could not be rendered from `validation.json`.
+            Please check the workflow logs and the uploaded HTML artifact for details.
+            EOF
+          fi
+
+      - name: Post sticky PR comment
+        if: always() && steps.collect_files.outputs.has_target_files == 'true'
+        continue-on-error: true
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: fhir-validation
+          path: pr-summary.md
+          recreate: true
+          skip_unchanged: true
+
+      - name: Upload HTML validation report
+        if: always() && steps.collect_files.outputs.has_target_files == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: fhir-validation-html-report
+          path: validation.html
+          if-no-files-found: warn
+
+      - name: Fail workflow when validator reports errors
+        if: always() && steps.collect_files.outputs.has_target_files == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          EXIT_CODE="${{ steps.run_validator.outputs.validator_exit_code }}"
+          if [[ "$EXIT_CODE" != "0" ]]; then
+            echo "FHIR validation finished with errors (exit code: $EXIT_CODE)."
+            exit 1
+          fi
+
+          echo "FHIR validation completed successfully."
