@@ -213,7 +213,6 @@ jobs:
 
           VALIDATOR_ARGS+=("-ig" "hl7.fhir.eu.mpd#current")
           VALIDATOR_ARGS+=("-ig" "hl7.fhir.eu.laboratory#2.0.0")
-          VALIDATOR_ARGS+=("-ig" "hl7.fhir.eu.imaging#current")
           VALIDATOR_ARGS+=("-ig" "hl7.fhir.eu.eps#current")
           VALIDATOR_ARGS+=("-ig" "hl7.fhir.eu.hdr#current")
           VALIDATOR_ARGS+=("-ig" "hl7.fhir.eu.base#2.0.0")
