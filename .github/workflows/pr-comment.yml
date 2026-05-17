@@ -31,11 +31,37 @@ jobs:
 
           mkdir -p .ci-comment
           COMMENT_FILE=".ci-comment/pr-summary.md"
+          FALLBACK_PR_NUMBER="$(jq -r '.workflow_run.pull_requests[0].number // empty' "$GITHUB_EVENT_PATH")"
 
-          ARTIFACTS_JSON="$(curl -fsSL \
-            -H "Authorization: Bearer $GH_TOKEN" \
-            -H "Accept: application/vnd.github+json" \
-            "https://api.github.com/repos/$REPOSITORY/actions/runs/$RUN_ID/artifacts")"
+          ARTIFACTS_JSON=""
+          for attempt in 1 2 3 4 5 6; do
+            if ARTIFACTS_JSON="$(curl -fsSL \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/$REPOSITORY/actions/runs/$RUN_ID/artifacts" 2>/dev/null)"; then
+              break
+            fi
+            echo "Artifacts API not ready yet (attempt $attempt). Retrying..."
+            sleep 5
+          done
+
+          if [[ -z "$ARTIFACTS_JSON" ]]; then
+            echo "Could not retrieve artifacts for run $RUN_ID."
+            if [[ -n "$FALLBACK_PR_NUMBER" ]]; then
+              PR_NUMBER="$FALLBACK_PR_NUMBER"
+              printf '%s\n' \
+                '## FHIR Validation Summary' \
+                '' \
+                'Validation artifacts are not available yet.' \
+                "Validation run: $RUN_URL" \
+                > "$COMMENT_FILE"
+              echo "has_pr=true" >> "$GITHUB_OUTPUT"
+              echo "pr_number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            echo "has_pr=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
 
           META_ARTIFACT_ID="$(echo "$ARTIFACTS_JSON" | jq -r '.artifacts[] | select(.name == "fhir-validation-pr-meta" and .expired == false) | .id' | head -n 1)"
           SUMMARY_ARTIFACT_ID="$(echo "$ARTIFACTS_JSON" | jq -r '.artifacts[] | select(.name == "fhir-validation-pr-summary" and .expired == false) | .id' | head -n 1)"
@@ -43,23 +69,31 @@ jobs:
 
           if [[ -z "$META_ARTIFACT_ID" ]]; then
             echo "No PR metadata artifact found."
-            echo "has_pr=false" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
+            if [[ -n "$FALLBACK_PR_NUMBER" ]]; then
+              PR_NUMBER="$FALLBACK_PR_NUMBER"
+            else
+              echo "has_pr=false" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+          else
+            curl -fsSL \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/$REPOSITORY/actions/artifacts/$META_ARTIFACT_ID/zip" \
+              -o .ci-comment/pr-meta.zip
 
-          curl -fsSL \
-            -H "Authorization: Bearer $GH_TOKEN" \
-            -H "Accept: application/vnd.github+json" \
-            "https://api.github.com/repos/$REPOSITORY/actions/artifacts/$META_ARTIFACT_ID/zip" \
-            -o .ci-comment/pr-meta.zip
+            unzip -qo .ci-comment/pr-meta.zip -d .ci-comment
 
-          unzip -qo .ci-comment/pr-meta.zip -d .ci-comment
-
-          PR_NUMBER="$(jq -r '.pr_number // empty' .ci-comment/pr-meta.json)"
-          if [[ -z "$PR_NUMBER" || "$PR_NUMBER" == "null" ]]; then
-            echo "No PR number found in metadata artifact."
-            echo "has_pr=false" >> "$GITHUB_OUTPUT"
-            exit 0
+            PR_NUMBER="$(jq -r '.pr_number // empty' .ci-comment/pr-meta.json)"
+            if [[ -z "$PR_NUMBER" || "$PR_NUMBER" == "null" ]]; then
+              echo "No PR number found in metadata artifact."
+              if [[ -n "$FALLBACK_PR_NUMBER" ]]; then
+                PR_NUMBER="$FALLBACK_PR_NUMBER"
+              else
+                echo "has_pr=false" >> "$GITHUB_OUTPUT"
+                exit 0
+              fi
+            fi
           fi
 
           if [[ -n "$SUMMARY_ARTIFACT_ID" ]]; then
@@ -88,6 +122,92 @@ jobs:
 
           printf '\n## HTML Report Artifact\n\n[Download `fhir-validation-html-report`](%s)\n' "$HTML_ARTIFACT_URL" >> "$COMMENT_FILE"
           printf '\nValidation run: %s\n' "$RUN_URL" >> "$COMMENT_FILE"
+
+          MAX_COMMENT_BYTES=65000
+          CURRENT_BYTES="$(wc -c < "$COMMENT_FILE" | tr -d ' ')"
+          if [[ "$CURRENT_BYTES" -gt "$MAX_COMMENT_BYTES" ]]; then
+            echo "Comment body too large ($CURRENT_BYTES bytes). Trying errors-only summary."
+
+            ERRORS_TABLE_FILE=".ci-comment/errors-only-table.md"
+            : > "$ERRORS_TABLE_FILE"
+            awk '
+              BEGIN { in_table=0; printed_header=0 }
+              /^\|[[:space:]]*File[[:space:]]*\|/ {
+                in_table=1;
+                print;
+                getline;
+                print;
+                printed_header=1;
+                next;
+              }
+              {
+                if (in_table==1) {
+                  if ($0 ~ /^\|/) {
+                    if ($0 ~ /❌[[:space:]]+ERROR/) print;
+                    next;
+                  }
+                  in_table=0;
+                }
+              }
+            ' "$COMMENT_FILE" > "$ERRORS_TABLE_FILE"
+
+            ERRORS_ONLY_FILE=".ci-comment/pr-summary-errors-only.md"
+            printf '%s\n' \
+              '## FHIR Validation Summary (errors only)' \
+              '' \
+              'The full summary exceeded the GitHub comment body limit.' \
+              'Showing only ERROR entries.' \
+              '' \
+              > "$ERRORS_ONLY_FILE"
+
+            if grep -q '^|' "$ERRORS_TABLE_FILE"; then
+              cat "$ERRORS_TABLE_FILE" >> "$ERRORS_ONLY_FILE"
+            else
+              printf '%s\n' \
+                'No ERROR rows were found in the rendered table.' \
+                '' \
+                >> "$ERRORS_ONLY_FILE"
+            fi
+
+            printf '\n## HTML Report Artifact\n\n[Download `fhir-validation-html-report`](%s)\n' "$HTML_ARTIFACT_URL" >> "$ERRORS_ONLY_FILE"
+            printf '\nValidation run: %s\n' "$RUN_URL" >> "$ERRORS_ONLY_FILE"
+
+            ERRORS_ONLY_BYTES="$(wc -c < "$ERRORS_ONLY_FILE" | tr -d ' ')"
+            if [[ "$ERRORS_ONLY_BYTES" -le "$MAX_COMMENT_BYTES" ]]; then
+              mv "$ERRORS_ONLY_FILE" "$COMMENT_FILE"
+            else
+              echo "Errors-only summary still too large ($ERRORS_ONLY_BYTES bytes). Truncating to fit GitHub comment limit."
+
+              HEADER_FILE=".ci-comment/pr-summary-header.md"
+              printf '%s\n' \
+                '## FHIR Validation Summary (truncated)' \
+                '' \
+                'The full validation summary exceeded the GitHub comment body limit.' \
+                '' \
+                "- Validation run: $RUN_URL" \
+                "- HTML report artifact: $HTML_ARTIFACT_URL" \
+                '' \
+                '---' \
+                > "$HEADER_FILE"
+
+              HEADER_BYTES="$(wc -c < "$HEADER_FILE" | tr -d ' ')"
+              SUFFIX=$'\n\n...[comment truncated due to GitHub size limit]\n'
+              SUFFIX_BYTES="$(printf '%s' "$SUFFIX" | wc -c | tr -d ' ')"
+              ALLOWED_BYTES=$((MAX_COMMENT_BYTES - HEADER_BYTES - SUFFIX_BYTES))
+
+              if [[ "$ALLOWED_BYTES" -lt 0 ]]; then
+                ALLOWED_BYTES=0
+              fi
+
+              {
+                cat "$HEADER_FILE"
+                head -c "$ALLOWED_BYTES" "$ERRORS_ONLY_FILE"
+                printf '%s' "$SUFFIX"
+              } > .ci-comment/pr-summary-truncated.md
+
+              mv .ci-comment/pr-summary-truncated.md "$COMMENT_FILE"
+            fi
+          fi
 
           echo "has_pr=true" >> "$GITHUB_OUTPUT"
           echo "pr_number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
