@@ -18,9 +18,9 @@ This README is generated from `main` branch validation results.
 
 ## Validation Status (Errors)
 
-| Subfolder | Status | Errors |
-| --- | --- | ---: |
-| `eps/Sensotrend` | ✅ | 0 |
-| `lab/de-mii-examples` | ✅ | 0 |
+| Subfolder | Status | Errors | Warnings | Information |
+| --- | --- | ---: | ---: | ---: |
+| `eps/Sensotrend` | ✅ | 0 | 264 | 736 |
+| `lab/de-mii-examples` | ✅ | 0 | 20 | 15 |
 
 > Status values are automatically recalculated on `main` by the `Main Validation + README` workflow.
