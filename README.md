@@ -10,8 +10,9 @@ This README is generated from `main` branch validation results.
 - `base/`
 - `eps/`
   - `Sensotrend/`
+  - `epic/`
 - `hdr/`
-- `imaging/`
+- `imaging/` (missing)
 - `lab/`
   - `de-mii-examples/`
 - `mpd/`
@@ -21,6 +22,7 @@ This README is generated from `main` branch validation results.
 | Subfolder | Status | Errors | Warnings | Information |
 | --- | --- | ---: | ---: | ---: |
 | `eps/Sensotrend` | ✅ | 0 | 264 | 736 |
+| `eps/epic` | ❌ | 1 | 55 | 55 |
 | `lab/de-mii-examples` | ✅ | 0 | 20 | 15 |
 
 > Status values are automatically recalculated on `main` by the `Main Validation + README` workflow.
