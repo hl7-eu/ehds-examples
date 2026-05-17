@@ -1,34 +1,103 @@
 name: PR Validation Comment
 
 on:
-  pull_request_target:
-    types: [opened, synchronize, reopened]
+  workflow_run:
+    workflows: ["FHIR Validation"]
+    types: [completed]
 
 permissions:
   contents: read
   issues: write
-  pull-requests: read
+  pull-requests: write
+  actions: read
 
 jobs:
   comment:
     name: Post sticky validation comment
+    if: github.event.workflow_run.event == 'pull_request' && github.event.workflow_run.actor.login != 'dependabot[bot]'
     runs-on: ubuntu-latest
 
     steps:
+      - name: Build comment from validation artifacts
+        id: build_comment
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          RUN_ID: ${{ github.event.workflow_run.id }}
+          RUN_URL: ${{ github.event.workflow_run.html_url }}
+        run: |
+          set -euo pipefail
+
+          mkdir -p .ci-comment
+          COMMENT_FILE=".ci-comment/pr-summary.md"
+
+          ARTIFACTS_JSON="$(curl -fsSL \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/$REPOSITORY/actions/runs/$RUN_ID/artifacts")"
+
+          META_ARTIFACT_ID="$(echo "$ARTIFACTS_JSON" | jq -r '.artifacts[] | select(.name == "fhir-validation-pr-meta" and .expired == false) | .id' | head -n 1)"
+          SUMMARY_ARTIFACT_ID="$(echo "$ARTIFACTS_JSON" | jq -r '.artifacts[] | select(.name == "fhir-validation-pr-summary" and .expired == false) | .id' | head -n 1)"
+          HTML_ARTIFACT_ID="$(echo "$ARTIFACTS_JSON" | jq -r '.artifacts[] | select(.name == "fhir-validation-html-report" and .expired == false) | .id' | head -n 1)"
+
+          if [[ -z "$META_ARTIFACT_ID" ]]; then
+            echo "No PR metadata artifact found."
+            echo "has_pr=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          curl -fsSL \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/$REPOSITORY/actions/artifacts/$META_ARTIFACT_ID/zip" \
+            -o .ci-comment/pr-meta.zip
+
+          unzip -qo .ci-comment/pr-meta.zip -d .ci-comment
+
+          PR_NUMBER="$(jq -r '.pr_number // empty' .ci-comment/pr-meta.json)"
+          if [[ -z "$PR_NUMBER" || "$PR_NUMBER" == "null" ]]; then
+            echo "No PR number found in metadata artifact."
+            echo "has_pr=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if [[ -n "$SUMMARY_ARTIFACT_ID" ]]; then
+            curl -fsSL \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/$REPOSITORY/actions/artifacts/$SUMMARY_ARTIFACT_ID/zip" \
+              -o .ci-comment/pr-summary.zip
+            unzip -qo .ci-comment/pr-summary.zip -d .ci-comment
+          fi
+
+          if [[ ! -s "$COMMENT_FILE" ]]; then
+            printf '%s\n' \
+              '## FHIR Validation Summary' \
+              '' \
+              'No renderer summary artifact was found for this run.' \
+              "Validation run: $RUN_URL" \
+              > "$COMMENT_FILE"
+          fi
+
+          if [[ -n "$HTML_ARTIFACT_ID" ]]; then
+            HTML_ARTIFACT_URL="https://github.com/$REPOSITORY/actions/runs/$RUN_ID/artifacts/$HTML_ARTIFACT_ID"
+          else
+            HTML_ARTIFACT_URL="$RUN_URL"
+          fi
+
+          printf '\n## HTML Report Artifact\n\n[Download `fhir-validation-html-report`](%s)\n' "$HTML_ARTIFACT_URL" >> "$COMMENT_FILE"
+          printf '\nValidation run: %s\n' "$RUN_URL" >> "$COMMENT_FILE"
+
+          echo "has_pr=true" >> "$GITHUB_OUTPUT"
+          echo "pr_number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
+
       - name: Post sticky PR comment
+        if: steps.build_comment.outputs.has_pr == 'true'
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           header: fhir-validation
+          number: ${{ steps.build_comment.outputs.pr_number }}
+          path: .ci-comment/pr-summary.md
           recreate: true
           skip_unchanged: true
-          message: |
-            ## FHIR Validation
-
-            Validation runs in the `FHIR Validation` workflow on each pull request update.
-
-            - Check results: https://github.com/${{ github.repository }}/pull/${{ github.event.pull_request.number }}/checks
-            - Workflow runs: https://github.com/${{ github.repository }}/actions/workflows/fhir-validation.yml
-
-            Notes:
-            - This comment is posted by a dedicated `pull_request_target` workflow to support fork pull requests safely.
-            - No pull request branch checkout or pull request code execution happens in this comment workflow.
