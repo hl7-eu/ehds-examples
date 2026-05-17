@@ -36,7 +36,7 @@ jobs:
           : > .ci/subfolder-order.txt
           : > .ci/file-group-map.tsv
 
-          FOLDERS=(base eps hdr lab mpd)
+          FOLDERS=(base eps hdr imaging lab mpd)
           FILE_COUNT=0
           CONTEXT_COUNT=0
           declare -A SEEN_GROUPS=()
@@ -262,6 +262,7 @@ jobs:
 
           VALIDATOR_ARGS+=("-ig" "hl7.fhir.eu.mpd#current")
           VALIDATOR_ARGS+=("-ig" "hl7.fhir.eu.laboratory#2.0.0")
+          VALIDATOR_ARGS+=("-ig" "hl7.fhir.eu.imaging#1.0.0-ballot")
           VALIDATOR_ARGS+=("-ig" "hl7.fhir.eu.eps#current")
           VALIDATOR_ARGS+=("-ig" "hl7.fhir.eu.hdr#current")
           VALIDATOR_ARGS+=("-ig" "hl7.fhir.eu.base#2.0.0")

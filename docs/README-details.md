@@ -8,6 +8,7 @@ Top-level folders are organized by specification domain:
 
 - `base`
 - `eps`
+- `hdr`
 - `imaging`
 - `lab`
 - `mpd`
@@ -21,7 +22,7 @@ A GitHub Actions workflow (`FHIR Validation`) validates changes in pull requests
 Validation behavior:
 
 1. Detects changed files in the PR.
-2. Selects changed top-level spec folders from: `base`, `eps`, `lab`, `mpd`.
+2. Selects changed top-level spec folders from: `base`, `eps`, `hdr`, `imaging`, `lab`, `mpd`.
 3. For each changed folder path in those domains, collects all `*.json` and `*.xml` files recursively from that folder.
 4. Runs a precheck: each resource must have `meta.profile`, and at least one profile entry must start with `http://hl7.eu/fhir/`.
 5. Runs the Java FHIR validator with:
@@ -34,13 +35,11 @@ Validation behavior:
    - one `-resolution-context` per directory that contains changed/new content
    - required EHDS IG packages via `-ig`
 
-Note: `imaging/**` is currently excluded from CI validation due to an API dependency issue.
-
 Loaded IG packages:
 
-- `hl7.fhir.eu.mpd#1.0.0`
+- `hl7.fhir.eu.mpd#current`
 - `hl7.fhir.eu.laboratory#2.0.0`
-- `hl7.fhir.eu.imaging#current`
+- `hl7.fhir.eu.imaging#1.0.0-ballot`
 - `hl7.fhir.eu.eps#current`
 - `hl7.fhir.eu.hdr#current`
 - `hl7.fhir.eu.base#2.0.0`
@@ -48,10 +47,10 @@ Loaded IG packages:
 ### Validation Outputs in PRs
 
 - A sticky PR comment is posted by a dedicated `workflow_run` workflow after `FHIR Validation` completes.
-- The comment content is based on the rendered validation summary artifact and includes a download link to the HTML artifact.
+- The comment content is based on the rendered validation summary artifact and includes a download link to the validation artifact.
 - Dependabot PRs are excluded from sticky comment posting.
 - GitHub annotation output from the renderer.
-- A downloadable HTML artifact: `fhir-validation-html-report` (`validation.html`).
+- A downloadable validation artifact: `fhir-validation-html-report` (`validation.html`, `validation.json`).
 
 ## Failure Conditions
 
@@ -68,8 +67,9 @@ You can run a local validation manually with:
 java -jar validator_cli.jar \
   -resolution-context lab/my-feature-examples \
   -resolution-context lab/my-feature-examples/subset-a \
-  -ig hl7.fhir.eu.mpd#1.0.0 \
+  -ig hl7.fhir.eu.mpd#current \
   -ig hl7.fhir.eu.laboratory#2.0.0 \
+  -ig hl7.fhir.eu.imaging#1.0.0-ballot \
   -ig hl7.fhir.eu.eps#current \
   -ig hl7.fhir.eu.hdr#current \
   -ig hl7.fhir.eu.base#2.0.0 \

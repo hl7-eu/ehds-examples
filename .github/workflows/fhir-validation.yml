@@ -33,6 +33,8 @@ jobs:
           declare -A ALLOWED_FOLDERS=(
             [base]=1
             [eps]=1
+            [hdr]=1
+            [imaging]=1
             [lab]=1
             [mpd]=1
           )
@@ -47,7 +49,7 @@ jobs:
           done
 
           ORDERED_FOLDERS=()
-          for folder in base eps lab mpd; do
+          for folder in base eps hdr imaging lab mpd; do
             if [[ -n "${SEEN[$folder]:-}" ]]; then
               ORDERED_FOLDERS+=("$folder")
             fi
@@ -82,6 +84,8 @@ jobs:
           declare -A ALLOWED_FOLDERS=(
             [base]=1
             [eps]=1
+            [hdr]=1
+            [imaging]=1
             [lab]=1
             [mpd]=1
           )
@@ -293,6 +297,7 @@ jobs:
 
           VALIDATOR_ARGS+=("-ig" "hl7.fhir.eu.mpd#current")
           VALIDATOR_ARGS+=("-ig" "hl7.fhir.eu.laboratory#2.0.0")
+          VALIDATOR_ARGS+=("-ig" "hl7.fhir.eu.imaging#1.0.0-ballot")
           VALIDATOR_ARGS+=("-ig" "hl7.fhir.eu.eps#current")
           VALIDATOR_ARGS+=("-ig" "hl7.fhir.eu.hdr#current")
           VALIDATOR_ARGS+=("-ig" "hl7.fhir.eu.base#2.0.0")

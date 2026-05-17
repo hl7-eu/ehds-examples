@@ -11,6 +11,7 @@ This README is generated from `main` branch validation results.
 - `eps/`
   - `Sensotrend/`
 - `hdr/`
+- `imaging/`
 - `lab/`
   - `de-mii-examples/`
 - `mpd/`
