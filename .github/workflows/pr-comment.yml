@@ -137,7 +137,10 @@ jobs:
                 if (in_table==1) {
                   if ($0 ~ /^\|/) {
                     if ($0 ~ /^ *\|[[:space:]]*---/) next
-                    if ($0 ~ /❌[[:space:]]+ERROR/) print
+                    sev=$3
+                    gsub(/^[ \t]+|[ \t]+$/, "", sev)
+                    sev_upper=toupper(sev)
+                    if (sev_upper ~ /ERROR/) print
                     next
                   }
                   in_table=0
