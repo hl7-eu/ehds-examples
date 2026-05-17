@@ -8,6 +8,7 @@ This README is generated from `main` branch validation results.
 
 - `base/`
 - `eps/`
+  - `Sensotrend/`
 - `hdr/`
 - `lab/`
   - `de-mii-examples/`
@@ -17,6 +18,7 @@ This README is generated from `main` branch validation results.
 
 | Subfolder | Status | Errors |
 | --- | --- | ---: |
+| `eps/Sensotrend` | ✅ | 0 |
 | `lab/de-mii-examples` | ✅ | 0 |
 
 > Status values are automatically recalculated on `main` by the `Main Validation + README` workflow.
