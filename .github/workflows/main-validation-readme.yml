@@ -7,6 +7,9 @@ on:
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
+  actions: read
 
 jobs:
   validate-and-update-readme:
@@ -396,12 +399,14 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          PAGES_URL="https://${GITHUB_REPOSITORY_OWNER}.github.io/${GITHUB_REPOSITORY#*/}/"
 
           {
             echo "# EHDS FHIR Examples"
             echo
             echo "This README is generated from \`main\` branch validation results."
             echo
+            echo "- Latest main validation report (GitHub Pages): [${PAGES_URL}](${PAGES_URL})"
             echo "- Detailed documentation (validation rules, CI details, local usage): [docs/README-details.md](docs/README-details.md)"
             echo
             echo "## Included Example Folders"
@@ -502,3 +507,90 @@ jobs:
           fi
 
           echo "Main validation finished successfully with zero errors."
+
+  publish-pages:
+    name: Publish main validation report to GitHub Pages
+    needs: validate-and-update-readme
+    if: always() && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+      actions: read
+      contents: read
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Download main validation artifacts
+        id: download_artifacts
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: main-validation-artifacts
+          path: .ci-pages/input
+
+      - name: Build static Pages site
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mkdir -p .ci-pages/site
+
+          if [[ -f .ci-pages/input/validation.html ]]; then
+            cp .ci-pages/input/validation.html .ci-pages/site/validation.html
+          fi
+          if [[ -f .ci-pages/input/validation.json ]]; then
+            cp .ci-pages/input/validation.json .ci-pages/site/validation.json
+          fi
+          if [[ -f .ci-pages/input/validator-cli.log ]]; then
+            cp .ci-pages/input/validator-cli.log .ci-pages/site/validator-cli.log
+          fi
+          if [[ -f .ci-pages/input/subfolder-error-counts.tsv ]]; then
+            cp .ci-pages/input/subfolder-error-counts.tsv .ci-pages/site/subfolder-error-counts.tsv
+          fi
+
+          {
+            echo '<!doctype html>'
+            echo '<html lang="en">'
+            echo '<head>'
+            echo '  <meta charset="utf-8" />'
+            echo '  <meta name="viewport" content="width=device-width, initial-scale=1" />'
+            echo '  <title>EHDS Main Validation Reports</title>'
+            echo '  <style>'
+            echo '    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; max-width: 960px; margin: 2rem auto; padding: 0 1rem; line-height: 1.5; }'
+            echo '    h1 { margin-bottom: 0.5rem; }'
+            echo '    ul { margin-top: 1rem; }'
+            echo '    code { background: #f2f2f2; padding: 0.1rem 0.3rem; border-radius: 4px; }'
+            echo '  </style>'
+            echo '</head>'
+            echo '<body>'
+            echo '  <h1>EHDS Main Validation Reports</h1>'
+            echo '  <p>Published from workflow: <code>Main Validation + README</code>.</p>'
+            echo '  <ul>'
+            if [[ -f .ci-pages/site/validation.html ]]; then
+              echo '    <li><a href="./validation.html">validation.html</a></li>'
+            fi
+            if [[ -f .ci-pages/site/validation.json ]]; then
+              echo '    <li><a href="./validation.json">validation.json</a></li>'
+            fi
+            if [[ -f .ci-pages/site/validator-cli.log ]]; then
+              echo '    <li><a href="./validator-cli.log">validator-cli.log</a></li>'
+            fi
+            if [[ -f .ci-pages/site/subfolder-error-counts.tsv ]]; then
+              echo '    <li><a href="./subfolder-error-counts.tsv">subfolder-error-counts.tsv</a></li>'
+            fi
+            echo '  </ul>'
+            echo '</body>'
+            echo '</html>'
+          } > .ci-pages/site/index.html
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .ci-pages/site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

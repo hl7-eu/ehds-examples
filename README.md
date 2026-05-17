@@ -2,6 +2,7 @@
 
 This README is generated from `main` branch validation results.
 
+- Latest main validation report (GitHub Pages): [https://patrick-werner.github.io/ehds-examples/](https://patrick-werner.github.io/ehds-examples/)
 - Detailed documentation (validation rules, CI details, local usage): [docs/README-details.md](docs/README-details.md)
 
 ## Included Example Folders
