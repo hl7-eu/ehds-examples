@@ -371,13 +371,15 @@ jobs:
           path: pr-summary.md
           if-no-files-found: warn
 
-      - name: Upload HTML validation report
+      - name: Upload validation reports (HTML + JSON)
         id: upload_html_report
         if: always() && steps.collect_files.outputs.has_target_files == 'true'
         uses: actions/upload-artifact@v7
         with:
           name: fhir-validation-html-report
-          path: validation.html
+          path: |
+            validation.html
+            validation.json
           if-no-files-found: warn
 
       - name: Fail workflow when validator reports errors
