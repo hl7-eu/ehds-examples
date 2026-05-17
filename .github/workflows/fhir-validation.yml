@@ -311,7 +311,7 @@ jobs:
           done < .ci/target-files.txt
 
           set +e
-          java -jar .cache/fhir-validator/validator_cli.jar "${VALIDATOR_ARGS[@]}" > validator-cli.log 2>&1
+          java -jar .cache/fhir-validator/validator_cli.jar "${VALIDATOR_ARGS[@]}" 2>&1 | tee validator-cli.log
           EXIT_CODE=$?
           set -e
 
