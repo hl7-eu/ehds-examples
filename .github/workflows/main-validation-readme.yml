@@ -292,14 +292,18 @@ jobs:
           set -euo pipefail
 
           : > .ci/subfolder-error-counts.tsv
-          declare -A COUNTS=()
+          declare -A ERROR_COUNTS=()
+          declare -A WARNING_COUNTS=()
+          declare -A INFO_COUNTS=()
           declare -a GROUP_ORDER=()
 
           if [[ -f .ci/subfolder-order.txt ]]; then
             while IFS= read -r group; do
               [[ -z "$group" ]] && continue
-              if [[ -z "${COUNTS[$group]+x}" ]]; then
-                COUNTS["$group"]=0
+              if [[ -z "${ERROR_COUNTS[$group]+x}" ]]; then
+                ERROR_COUNTS["$group"]=0
+                WARNING_COUNTS["$group"]=0
+                INFO_COUNTS["$group"]=0
                 GROUP_ORDER+=("$group")
               fi
             done < .ci/subfolder-order.txt
@@ -324,8 +328,8 @@ jobs:
           increment_group_by_file() {
             local file="$1"
             local group="${FILE_TO_GROUP[$file]:-}"
-            if [[ -n "$group" && -n "${COUNTS[$group]+x}" ]]; then
-              COUNTS["$group"]=$((COUNTS[$group] + 1))
+            if [[ -n "$group" && -n "${ERROR_COUNTS[$group]+x}" ]]; then
+              ERROR_COUNTS["$group"]=$((ERROR_COUNTS[$group] + 1))
             fi
           }
 
@@ -356,11 +360,12 @@ jobs:
                   // ""
                 ) as $rawPath
               | $res.issue[]?
-              | select(.severity == "error")
-              | $rawPath
+              | select((.severity // "") == "error" or (.severity // "") == "warning" or (.severity // "") == "information" or (.severity // "") == "fatal")
+              | [$rawPath, (.severity // "")]
+              | @tsv
             ' validation.json > .ci/validator-error-paths.txt || true
 
-            while IFS= read -r raw; do
+            while IFS=$'\t' read -r raw severity; do
               [[ -z "$raw" ]] && continue
               raw="${raw#./}"
               mapped=""
@@ -380,17 +385,29 @@ jobs:
                 fi
               fi
 
-              if [[ -n "$mapped" && -n "${COUNTS[$mapped]+x}" ]]; then
-                COUNTS["$mapped"]=$((COUNTS[$mapped] + 1))
+              if [[ -n "$mapped" && -n "${ERROR_COUNTS[$mapped]+x}" ]]; then
+                case "$severity" in
+                  error|fatal)
+                    ERROR_COUNTS["$mapped"]=$((ERROR_COUNTS[$mapped] + 1))
+                    ;;
+                  warning)
+                    WARNING_COUNTS["$mapped"]=$((WARNING_COUNTS[$mapped] + 1))
+                    ;;
+                  information)
+                    INFO_COUNTS["$mapped"]=$((INFO_COUNTS[$mapped] + 1))
+                    ;;
+                esac
               fi
             done < .ci/validator-error-paths.txt
           fi
 
           TOTAL_ERRORS=0
           for group in "${GROUP_ORDER[@]}"; do
-            count="${COUNTS[$group]}"
-            TOTAL_ERRORS=$((TOTAL_ERRORS + count))
-            printf '%s\t%s\n' "$group" "$count" >> .ci/subfolder-error-counts.tsv
+            error_count="${ERROR_COUNTS[$group]}"
+            warning_count="${WARNING_COUNTS[$group]}"
+            info_count="${INFO_COUNTS[$group]}"
+            TOTAL_ERRORS=$((TOTAL_ERRORS + error_count))
+            printf '%s\t%s\t%s\t%s\n' "$group" "$error_count" "$warning_count" "$info_count" >> .ci/subfolder-error-counts.tsv
           done
 
           echo "total_errors=$TOTAL_ERRORS" >> "$GITHUB_OUTPUT"
@@ -430,21 +447,21 @@ jobs:
             echo
             echo "## Validation Status (Errors)"
             echo
-            echo "| Subfolder | Status | Errors |"
-            echo "| --- | --- | ---: |"
+            echo "| Subfolder | Status | Errors | Warnings | Information |"
+            echo "| --- | --- | ---: | ---: | ---: |"
 
             if [[ -s .ci/subfolder-error-counts.tsv ]]; then
-              while IFS=$'\t' read -r group count; do
+              while IFS=$'\t' read -r group error_count warning_count info_count; do
                 [[ -z "$group" ]] && continue
-                if [[ "$count" -gt 0 ]]; then
+                if [[ "$error_count" -gt 0 ]]; then
                   status="❌"
                 else
                   status="✅"
                 fi
-                echo "| \`$group\` | $status | $count |"
+                echo "| \`$group\` | $status | $error_count | $warning_count | $info_count |"
               done < .ci/subfolder-error-counts.tsv
             else
-              echo "| _No subfolders found_ | ✅ | 0 |"
+              echo "| _No subfolders found_ | ✅ | 0 | 0 | 0 |"
             fi
 
             echo
