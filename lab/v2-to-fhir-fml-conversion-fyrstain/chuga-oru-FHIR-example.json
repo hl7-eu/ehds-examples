@@ -1,0 +1,2770 @@
+{
+	"resourceType": "Bundle",
+	"meta": {
+		"profile": [
+			"http://hl7.eu/fhir/laboratory/StructureDefinition/Bundle-eu-lab"
+		]
+	},
+	"identifier": {
+		"system": "http://example.org",
+		"value": "1d9bcd50-1520-4962-833b-0a5d8e75f7ce"
+	},
+	"type": "document",
+	"timestamp": "2025-12-19T14:50:56.000+00:00",
+	"entry": [
+		{
+			"fullUrl": "urn:uuid:8e525670-5bf4-4d7a-8dd4-f63d6b92b157",
+			"resource": {
+				"resourceType": "Composition",
+				"id": "8e525670-5bf4-4d7a-8dd4-f63d6b92b157",
+				"meta": {
+					"profile": [
+						"http://hl7.eu/fhir/laboratory/StructureDefinition/Composition-eu-lab"
+					]
+				},
+				"extension": [
+					{
+						"url": "http://hl7.eu/fhir/laboratory/StructureDefinition/composition-diagnosticReportReference",
+						"valueReference": {
+							"reference": "urn:uuid:2dffcca9-4cad-4b42-806d-0999ed282fa5"
+						}
+					},
+					{
+						"url": "http://hl7.org/fhir/StructureDefinition/composition-clinicaldocument-versionNumber",
+						"valueString": "2.3"
+					},
+					{
+						"url": "http://hl7.eu/fhir/StructureDefinition/composition-basedOn-order-or-requisition",
+						"valueReference": {
+							"reference": "urn:uuid:d0a8f15b-e6d3-49e6-9fcc-bbb8d0184e1b"
+						}
+					},
+					{
+						"url": "http://hl7.eu/fhir/StructureDefinition/composition-basedOn-order-or-requisition",
+						"valueReference": {
+							"reference": "urn:uuid:745397b7-b7d6-478d-a473-3c74479e0980"
+						}
+					},
+					{
+						"url": "http://hl7.eu/fhir/StructureDefinition/composition-basedOn-order-or-requisition",
+						"valueReference": {
+							"reference": "urn:uuid:a33e3263-775d-445c-8142-b5863d6b449c"
+						}
+					},
+					{
+						"url": "http://hl7.eu/fhir/StructureDefinition/composition-basedOn-order-or-requisition",
+						"valueReference": {
+							"reference": "urn:uuid:c0672603-716b-4071-9fca-9264c8bd44bf"
+						}
+					},
+					{
+						"url": "http://hl7.eu/fhir/StructureDefinition/composition-basedOn-order-or-requisition",
+						"valueReference": {
+							"reference": "urn:uuid:5bf7f6d0-ef5b-4d00-a9bf-7d2906105a87"
+						}
+					},
+					{
+						"url": "http://hl7.eu/fhir/StructureDefinition/composition-basedOn-order-or-requisition",
+						"valueReference": {
+							"reference": "urn:uuid:888fabca-848c-4052-937d-9d0f1c963063"
+						}
+					},
+					{
+						"url": "http://hl7.eu/fhir/StructureDefinition/composition-basedOn-order-or-requisition",
+						"valueReference": {
+							"reference": "urn:uuid:d7602bfc-713f-489e-9bab-ffe2d95008fc"
+						}
+					},
+					{
+						"url": "http://hl7.eu/fhir/StructureDefinition/composition-basedOn-order-or-requisition",
+						"valueReference": {
+							"reference": "urn:uuid:69baa327-5aee-48c0-bfff-ac162fc04f15"
+						}
+					},
+					{
+						"url": "http://hl7.eu/fhir/StructureDefinition/composition-basedOn-order-or-requisition",
+						"valueReference": {
+							"reference": "urn:uuid:a82f3eb4-c3f7-4c3b-bfa2-a36ff05eec9c"
+						}
+					},
+					{
+						"url": "http://hl7.eu/fhir/StructureDefinition/composition-basedOn-order-or-requisition",
+						"valueReference": {
+							"reference": "urn:uuid:325a3d69-2448-47ed-8701-162d13f90cd1"
+						}
+					}
+				],
+				"status": "final",
+				"type": {
+					"coding": [
+						{
+							"system": "http://terminology.hl7.org/CodeSystem/v2-0076",
+							"code": "ORU"
+						},
+						{
+							"system": "http://terminology.hl7.org/CodeSystem/v2-0003",
+							"code": "R01"
+						}
+					]
+				},
+				"category": [
+					{
+						"coding": [
+							{
+								"system": "http://loinc.org",
+								"code": "26436-6"
+							}
+						]
+					}
+				],
+				"subject": {
+					"reference": "urn:uuid:2f63225a-91e7-4271-83f3-c18f74cee465"
+				},
+				"date": "2025-12-19T14:50:56+00:00",
+				"author": [
+					{
+						"display": "LMX5"
+					},
+					{
+						"identifier": {
+							"system": "urn:ietf:rfc:3986",
+							"value": "http://example.org/fhir/chugasystem/LABOC"
+						}
+					}
+				],
+				"title": "Laboratory Report",
+				"section": [
+					{
+						"title": "Laboratory Results",
+						"code": {
+							"coding": [
+								{
+									"system": "http://loinc.org",
+									"code": "26436-6"
+								}
+							]
+						},
+						"entry": [
+							{
+								"reference": "urn:uuid:5ba52561-36df-4489-9359-786b2374aa30"
+							},
+							{
+								"reference": "urn:uuid:0d55f024-b625-42ef-ac35-49f4d3c6e0cd"
+							},
+							{
+								"reference": "urn:uuid:413e0233-66c8-444a-861f-e42b194038fc"
+							},
+							{
+								"reference": "urn:uuid:7497fa3c-60c1-480c-ad1b-ccdbc167b7b0"
+							},
+							{
+								"reference": "urn:uuid:722c8ec5-df18-44e6-b8a0-c8c0e3eebcf6"
+							},
+							{
+								"reference": "urn:uuid:e9fdfa07-71a1-4ed5-8c51-b94117109ba9"
+							},
+							{
+								"reference": "urn:uuid:cc845dfc-29f5-4972-872f-7eba0bc1b714"
+							},
+							{
+								"reference": "urn:uuid:fcde19c2-800a-4d92-8b75-504bb2ad3d80"
+							},
+							{
+								"reference": "urn:uuid:70eba4ad-ecec-491d-9c34-81d0aa1dc74f"
+							},
+							{
+								"reference": "urn:uuid:b79d440e-6696-4615-b72a-ff74b9676458"
+							},
+							{
+								"reference": "urn:uuid:baa3d79c-fdf8-430c-a8a5-0eab8586bcc6"
+							},
+							{
+								"reference": "urn:uuid:03649155-ef17-4e5c-a808-6eb25c65d9f4"
+							},
+							{
+								"reference": "urn:uuid:906176f5-b47b-4a12-82cb-4999d99a4aad"
+							},
+							{
+								"reference": "urn:uuid:2cdc3018-870e-4de5-a5c1-aca723e1d0ad"
+							},
+							{
+								"reference": "urn:uuid:f7f4169c-155e-4eae-946b-ba40f7e4b212"
+							},
+							{
+								"reference": "urn:uuid:6aeb2300-7b52-465f-bdb3-a550923438b2"
+							},
+							{
+								"reference": "urn:uuid:99133972-8f14-4fd2-a14f-bb1e364c7139"
+							},
+							{
+								"reference": "urn:uuid:521854b2-7185-4ff3-b73a-37fcdfeb66af"
+							}
+						]
+					}
+				]
+			}
+		},
+		{
+			"fullUrl": "urn:uuid:2dffcca9-4cad-4b42-806d-0999ed282fa5",
+			"resource": {
+				"resourceType": "DiagnosticReport",
+				"id": "2dffcca9-4cad-4b42-806d-0999ed282fa5",
+				"meta": {
+					"profile": [
+						"http://hl7.eu/fhir/laboratory/StructureDefinition/DiagnosticReport-eu-lab"
+					]
+				},
+				"extension": [
+					{
+						"url": "http://hl7.org/fhir/5.0/StructureDefinition/extension-DiagnosticReport.composition",
+						"valueReference": {
+							"reference": "urn:uuid:8e525670-5bf4-4d7a-8dd4-f63d6b92b157"
+						}
+					}
+				],
+				"identifier": [
+					{
+						"type": {
+							"coding": [
+								{
+									"system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+									"code": "FILL"
+								}
+							]
+						},
+						"system": "http://example.org/fhir/chugasystem/5121829543",
+						"value": "1829543"
+					}
+				],
+				"status": "final",
+				"category": [
+					{
+						"coding": [
+							{
+								"system": "http://example.org/fhir/chugasystem/",
+								"code": "2296"
+							}
+						]
+					},
+					{
+						"coding": [
+							{
+								"system": "http://loinc.org",
+								"code": "26436-6"
+							}
+						]
+					}
+				],
+				"code": {
+					"coding": [
+						{
+							"system": "http://terminology.hl7.org/CodeSystem/v2-0076",
+							"code": "ORU"
+						},
+						{
+							"system": "http://terminology.hl7.org/CodeSystem/v2-0003",
+							"code": "R01"
+						},
+						{
+							"system": "http://loinc.org",
+							"code": "1988-5",
+							"display": "Protéine C réactive"
+						},
+						{
+							"system": "http://example.org/fhir/chugasystem",
+							"code": "I3",
+							"display": "IONO(Na,K,Cl,CO2,Pr)"
+						},
+						{
+							"system": "http://loinc.org",
+							"code": "2000-8",
+							"display": "Calcium"
+						},
+						{
+							"system": "http://loinc.org",
+							"code": "14879-1",
+							"display": "Phosphore"
+						},
+						{
+							"system": "http://loinc.org",
+							"code": "14749-6",
+							"display": "Glucose Héparin"
+						},
+						{
+							"system": "http://loinc.org",
+							"code": "22700-9",
+							"display": "Urée"
+						},
+						{
+							"system": "http://loinc.org",
+							"code": "14933-6",
+							"display": "A. Urique"
+						},
+						{
+							"system": "http://loinc.org",
+							"code": "14682-9",
+							"display": "Créatinine"
+						},
+						{
+							"system": "http://example.org/fhir/chugasystem",
+							"code": "DFG",
+							"display": "Débit filtr. glom."
+						},
+						{
+							"system": "http://example.org/fhir/chugasystem",
+							"code": "OSMC",
+							"display": "Osmolarité (c)"
+						}
+					]
+				},
+				"subject": {
+					"reference": "urn:uuid:2f63225a-91e7-4271-83f3-c18f74cee465"
+				},
+				"effectiveDateTime": "2025-12-19T13:15:00Z",
+				"performer": [
+					{
+						"display": "LMX5"
+					},
+					{
+						"identifier": {
+							"system": "urn:ietf:rfc:3986",
+							"value": "http://example.org/fhir/chugasystem/LABOC"
+						}
+					}
+				],
+				"resultsInterpreter": [
+					{
+						"display": "LMX5"
+					},
+					{
+						"identifier": {
+							"system": "urn:ietf:rfc:3986",
+							"value": "http://example.org/fhir/chugasystem/LABOC"
+						}
+					},
+					{
+						"type": "PractitionerRole",
+						"identifier": {
+							"system": "http://example.org",
+							"value": "017"
+						}
+					}
+				],
+				"specimen": [
+					{
+						"reference": "urn:uuid:f495d15f-b863-48b4-a3da-84dc3155d9fe"
+					},
+					{
+						"reference": "urn:uuid:292ba1c8-d606-4e0f-9a2b-02a5ccb75589"
+					},
+					{
+						"reference": "urn:uuid:922d0061-63be-4bba-9577-49f1ed2320c4"
+					},
+					{
+						"reference": "urn:uuid:5cb2f0ab-46b0-4bbf-9669-86ac8babb271"
+					},
+					{
+						"reference": "urn:uuid:3aa09ae8-1988-461b-8212-23fb0879fa2b"
+					},
+					{
+						"reference": "urn:uuid:60030885-eeef-44b8-8f44-7807a6dd2a60"
+					},
+					{
+						"reference": "urn:uuid:cd6260cb-eff7-40f1-ad21-348f64121fdb"
+					},
+					{
+						"reference": "urn:uuid:43efb029-e8e0-461d-823a-f206a931765c"
+					},
+					{
+						"reference": "urn:uuid:b0e92810-c43e-4dc2-9716-e258ae2fd439"
+					},
+					{
+						"reference": "urn:uuid:14d956bc-f6ec-4b2e-8f59-068529223f9a"
+					}
+				],
+				"result": [
+					{
+						"reference": "urn:uuid:5ba52561-36df-4489-9359-786b2374aa30"
+					},
+					{
+						"reference": "urn:uuid:0d55f024-b625-42ef-ac35-49f4d3c6e0cd"
+					},
+					{
+						"reference": "urn:uuid:413e0233-66c8-444a-861f-e42b194038fc"
+					},
+					{
+						"reference": "urn:uuid:7497fa3c-60c1-480c-ad1b-ccdbc167b7b0"
+					},
+					{
+						"reference": "urn:uuid:722c8ec5-df18-44e6-b8a0-c8c0e3eebcf6"
+					},
+					{
+						"reference": "urn:uuid:e9fdfa07-71a1-4ed5-8c51-b94117109ba9"
+					},
+					{
+						"reference": "urn:uuid:cc845dfc-29f5-4972-872f-7eba0bc1b714"
+					},
+					{
+						"reference": "urn:uuid:fcde19c2-800a-4d92-8b75-504bb2ad3d80"
+					},
+					{
+						"reference": "urn:uuid:70eba4ad-ecec-491d-9c34-81d0aa1dc74f"
+					},
+					{
+						"reference": "urn:uuid:b79d440e-6696-4615-b72a-ff74b9676458"
+					},
+					{
+						"reference": "urn:uuid:baa3d79c-fdf8-430c-a8a5-0eab8586bcc6"
+					},
+					{
+						"reference": "urn:uuid:03649155-ef17-4e5c-a808-6eb25c65d9f4"
+					},
+					{
+						"reference": "urn:uuid:906176f5-b47b-4a12-82cb-4999d99a4aad"
+					},
+					{
+						"reference": "urn:uuid:2cdc3018-870e-4de5-a5c1-aca723e1d0ad"
+					},
+					{
+						"reference": "urn:uuid:f7f4169c-155e-4eae-946b-ba40f7e4b212"
+					},
+					{
+						"reference": "urn:uuid:6aeb2300-7b52-465f-bdb3-a550923438b2"
+					},
+					{
+						"reference": "urn:uuid:99133972-8f14-4fd2-a14f-bb1e364c7139"
+					},
+					{
+						"reference": "urn:uuid:521854b2-7185-4ff3-b73a-37fcdfeb66af"
+					}
+				]
+			}
+		},
+		{
+			"fullUrl": "urn:uuid:2f63225a-91e7-4271-83f3-c18f74cee465",
+			"resource": {
+				"resourceType": "Patient",
+				"id": "2f63225a-91e7-4271-83f3-c18f74cee465",
+				"meta": {
+					"profile": [
+						"http://hl7.eu/fhir/laboratory/StructureDefinition/Patient-eu-lab"
+					]
+				},
+				"name": [
+					{
+						"family": "DOE",
+						"given": [
+							"JOHN"
+						]
+					}
+				],
+				"gender": "male",
+				"birthDate": "1970-01-01",
+				"address": [
+					{
+						"line": [
+							"2 RUE DU COLOMBIER"
+						],
+						"city": "RIVES SUR FURE",
+						"postalCode": "39140"
+					}
+				]
+			}
+		},
+		{
+			"fullUrl": "urn:uuid:d0a8f15b-e6d3-49e6-9fcc-bbb8d0184e1b",
+			"resource": {
+				"resourceType": "ServiceRequest",
+				"id": "d0a8f15b-e6d3-49e6-9fcc-bbb8d0184e1b",
+				"identifier": [
+					{
+						"type": {
+							"coding": [
+								{
+									"system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+									"code": "PLAC"
+								}
+							]
+						},
+						"system": "http://example.org/fhir/chugasystem/5121829543"
+					},
+					{
+						"type": {
+							"coding": [
+								{
+									"system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+									"code": "FILL"
+								}
+							]
+						},
+						"system": "http://example.org/fhir/chugasystem/5121829543",
+						"value": "1829543"
+					}
+				],
+				"status": "active",
+				"intent": "order",
+				"priority": "routine",
+				"code": {
+					"coding": [
+						{
+							"system": "http://loinc.org",
+							"code": "1988-5",
+							"display": "Protéine C réactive"
+						}
+					]
+				},
+				"subject": {
+					"reference": "urn:uuid:2f63225a-91e7-4271-83f3-c18f74cee465"
+				},
+				"authoredOn": "2025-12-19T14:04:00Z",
+				"requester": {
+					"type": "Practitioner",
+					"identifier": {
+						"system": "http://example.org",
+						"value": "DEFCDA"
+					}
+				}
+			}
+		},
+		{
+			"fullUrl": "urn:uuid:f495d15f-b863-48b4-a3da-84dc3155d9fe",
+			"resource": {
+				"resourceType": "Specimen",
+				"id": "f495d15f-b863-48b4-a3da-84dc3155d9fe",
+				"meta": {
+					"profile": [
+						"http://hl7.eu/fhir/laboratory/StructureDefinition/Specimen-eu-lab"
+					]
+				},
+				"accessionIdentifier": {
+					"system": "http://example.org/fhir/chugasystem/5121829543"
+				},
+				"subject": {
+					"reference": "urn:uuid:2f63225a-91e7-4271-83f3-c18f74cee465"
+				},
+				"receivedTime": "2025-12-19T14:04:00Z",
+				"collection": {
+					"collectedDateTime": "2025-12-19T13:15:00Z"
+				}
+			}
+		},
+		{
+			"fullUrl": "urn:uuid:745397b7-b7d6-478d-a473-3c74479e0980",
+			"resource": {
+				"resourceType": "ServiceRequest",
+				"id": "745397b7-b7d6-478d-a473-3c74479e0980",
+				"identifier": [
+					{
+						"type": {
+							"coding": [
+								{
+									"system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+									"code": "PLAC"
+								}
+							]
+						},
+						"system": "http://example.org/fhir/chugasystem/5121829543"
+					},
+					{
+						"type": {
+							"coding": [
+								{
+									"system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+									"code": "FILL"
+								}
+							]
+						},
+						"system": "http://example.org/fhir/chugasystem/5121829543",
+						"value": "1829543"
+					}
+				],
+				"status": "active",
+				"intent": "order",
+				"priority": "routine",
+				"code": {
+					"coding": [
+						{
+							"system": "http://example.org/fhir/chugasystem",
+							"code": "I3",
+							"display": "IONO(Na,K,Cl,CO2,Pr)"
+						}
+					]
+				},
+				"subject": {
+					"reference": "urn:uuid:2f63225a-91e7-4271-83f3-c18f74cee465"
+				},
+				"authoredOn": "2025-12-19T14:04:00Z",
+				"requester": {
+					"type": "Practitioner",
+					"identifier": {
+						"system": "http://example.org",
+						"value": "DEFCDA"
+					}
+				}
+			}
+		},
+		{
+			"fullUrl": "urn:uuid:292ba1c8-d606-4e0f-9a2b-02a5ccb75589",
+			"resource": {
+				"resourceType": "Specimen",
+				"id": "292ba1c8-d606-4e0f-9a2b-02a5ccb75589",
+				"meta": {
+					"profile": [
+						"http://hl7.eu/fhir/laboratory/StructureDefinition/Specimen-eu-lab"
+					]
+				},
+				"accessionIdentifier": {
+					"system": "http://example.org/fhir/chugasystem/5121829543"
+				},
+				"subject": {
+					"reference": "urn:uuid:2f63225a-91e7-4271-83f3-c18f74cee465"
+				},
+				"receivedTime": "2025-12-19T14:04:00Z",
+				"collection": {
+					"collectedDateTime": "2025-12-19T13:15:00Z"
+				}
+			}
+		},
+		{
+			"fullUrl": "urn:uuid:a33e3263-775d-445c-8142-b5863d6b449c",
+			"resource": {
+				"resourceType": "ServiceRequest",
+				"id": "a33e3263-775d-445c-8142-b5863d6b449c",
+				"identifier": [
+					{
+						"type": {
+							"coding": [
+								{
+									"system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+									"code": "PLAC"
+								}
+							]
+						},
+						"system": "http://example.org/fhir/chugasystem/5121829543"
+					},
+					{
+						"type": {
+							"coding": [
+								{
+									"system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+									"code": "FILL"
+								}
+							]
+						},
+						"system": "http://example.org/fhir/chugasystem/5121829543",
+						"value": "1829543"
+					}
+				],
+				"status": "active",
+				"intent": "order",
+				"priority": "routine",
+				"code": {
+					"coding": [
+						{
+							"system": "http://loinc.org",
+							"code": "2000-8",
+							"display": "Calcium"
+						}
+					]
+				},
+				"subject": {
+					"reference": "urn:uuid:2f63225a-91e7-4271-83f3-c18f74cee465"
+				},
+				"authoredOn": "2025-12-19T14:04:00Z",
+				"requester": {
+					"type": "Practitioner",
+					"identifier": {
+						"system": "http://example.org",
+						"value": "DEFCDA"
+					}
+				}
+			}
+		},
+		{
+			"fullUrl": "urn:uuid:922d0061-63be-4bba-9577-49f1ed2320c4",
+			"resource": {
+				"resourceType": "Specimen",
+				"id": "922d0061-63be-4bba-9577-49f1ed2320c4",
+				"meta": {
+					"profile": [
+						"http://hl7.eu/fhir/laboratory/StructureDefinition/Specimen-eu-lab"
+					]
+				},
+				"accessionIdentifier": {
+					"system": "http://example.org/fhir/chugasystem/5121829543"
+				},
+				"subject": {
+					"reference": "urn:uuid:2f63225a-91e7-4271-83f3-c18f74cee465"
+				},
+				"receivedTime": "2025-12-19T14:04:00Z",
+				"collection": {
+					"collectedDateTime": "2025-12-19T13:15:00Z"
+				}
+			}
+		},
+		{
+			"fullUrl": "urn:uuid:c0672603-716b-4071-9fca-9264c8bd44bf",
+			"resource": {
+				"resourceType": "ServiceRequest",
+				"id": "c0672603-716b-4071-9fca-9264c8bd44bf",
+				"identifier": [
+					{
+						"type": {
+							"coding": [
+								{
+									"system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+									"code": "PLAC"
+								}
+							]
+						},
+						"system": "http://example.org/fhir/chugasystem/5121829543"
+					},
+					{
+						"type": {
+							"coding": [
+								{
+									"system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+									"code": "FILL"
+								}
+							]
+						},
+						"system": "http://example.org/fhir/chugasystem/5121829543",
+						"value": "1829543"
+					}
+				],
+				"status": "active",
+				"intent": "order",
+				"priority": "routine",
+				"code": {
+					"coding": [
+						{
+							"system": "http://loinc.org",
+							"code": "14879-1",
+							"display": "Phosphore"
+						}
+					]
+				},
+				"subject": {
+					"reference": "urn:uuid:2f63225a-91e7-4271-83f3-c18f74cee465"
+				},
+				"authoredOn": "2025-12-19T14:04:00Z",
+				"requester": {
+					"type": "Practitioner",
+					"identifier": {
+						"system": "http://example.org",
+						"value": "DEFCDA"
+					}
+				}
+			}
+		},
+		{
+			"fullUrl": "urn:uuid:5cb2f0ab-46b0-4bbf-9669-86ac8babb271",
+			"resource": {
+				"resourceType": "Specimen",
+				"id": "5cb2f0ab-46b0-4bbf-9669-86ac8babb271",
+				"meta": {
+					"profile": [
+						"http://hl7.eu/fhir/laboratory/StructureDefinition/Specimen-eu-lab"
+					]
+				},
+				"accessionIdentifier": {
+					"system": "http://example.org/fhir/chugasystem/5121829543"
+				},
+				"subject": {
+					"reference": "urn:uuid:2f63225a-91e7-4271-83f3-c18f74cee465"
+				},
+				"receivedTime": "2025-12-19T14:04:00Z",
+				"collection": {
+					"collectedDateTime": "2025-12-19T13:15:00Z"
+				}
+			}
+		},
+		{
+			"fullUrl": "urn:uuid:5bf7f6d0-ef5b-4d00-a9bf-7d2906105a87",
+			"resource": {
+				"resourceType": "ServiceRequest",
+				"id": "5bf7f6d0-ef5b-4d00-a9bf-7d2906105a87",
+				"identifier": [
+					{
+						"type": {
+							"coding": [
+								{
+									"system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+									"code": "PLAC"
+								}
+							]
+						},
+						"system": "http://example.org/fhir/chugasystem/5121829543"
+					},
+					{
+						"type": {
+							"coding": [
+								{
+									"system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+									"code": "FILL"
+								}
+							]
+						},
+						"system": "http://example.org/fhir/chugasystem/5121829543",
+						"value": "1829543"
+					}
+				],
+				"status": "active",
+				"intent": "order",
+				"priority": "routine",
+				"code": {
+					"coding": [
+						{
+							"system": "http://loinc.org",
+							"code": "14749-6",
+							"display": "Glucose Héparin"
+						}
+					]
+				},
+				"subject": {
+					"reference": "urn:uuid:2f63225a-91e7-4271-83f3-c18f74cee465"
+				},
+				"authoredOn": "2025-12-19T14:04:00Z",
+				"requester": {
+					"type": "Practitioner",
+					"identifier": {
+						"system": "http://example.org",
+						"value": "DEFCDA"
+					}
+				}
+			}
+		},
+		{
+			"fullUrl": "urn:uuid:3aa09ae8-1988-461b-8212-23fb0879fa2b",
+			"resource": {
+				"resourceType": "Specimen",
+				"id": "3aa09ae8-1988-461b-8212-23fb0879fa2b",
+				"meta": {
+					"profile": [
+						"http://hl7.eu/fhir/laboratory/StructureDefinition/Specimen-eu-lab"
+					]
+				},
+				"accessionIdentifier": {
+					"system": "http://example.org/fhir/chugasystem/5121829543"
+				},
+				"subject": {
+					"reference": "urn:uuid:2f63225a-91e7-4271-83f3-c18f74cee465"
+				},
+				"receivedTime": "2025-12-19T14:04:00Z",
+				"collection": {
+					"collectedDateTime": "2025-12-19T13:15:00Z"
+				}
+			}
+		},
+		{
+			"fullUrl": "urn:uuid:888fabca-848c-4052-937d-9d0f1c963063",
+			"resource": {
+				"resourceType": "ServiceRequest",
+				"id": "888fabca-848c-4052-937d-9d0f1c963063",
+				"identifier": [
+					{
+						"type": {
+							"coding": [
+								{
+									"system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+									"code": "PLAC"
+								}
+							]
+						},
+						"system": "http://example.org/fhir/chugasystem/5121829543"
+					},
+					{
+						"type": {
+							"coding": [
+								{
+									"system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+									"code": "FILL"
+								}
+							]
+						},
+						"system": "http://example.org/fhir/chugasystem/5121829543",
+						"value": "1829543"
+					}
+				],
+				"status": "active",
+				"intent": "order",
+				"priority": "routine",
+				"code": {
+					"coding": [
+						{
+							"system": "http://loinc.org",
+							"code": "22700-9",
+							"display": "Urée"
+						}
+					]
+				},
+				"subject": {
+					"reference": "urn:uuid:2f63225a-91e7-4271-83f3-c18f74cee465"
+				},
+				"authoredOn": "2025-12-19T14:04:00Z",
+				"requester": {
+					"type": "Practitioner",
+					"identifier": {
+						"system": "http://example.org",
+						"value": "DEFCDA"
+					}
+				}
+			}
+		},
+		{
+			"fullUrl": "urn:uuid:60030885-eeef-44b8-8f44-7807a6dd2a60",
+			"resource": {
+				"resourceType": "Specimen",
+				"id": "60030885-eeef-44b8-8f44-7807a6dd2a60",
+				"meta": {
+					"profile": [
+						"http://hl7.eu/fhir/laboratory/StructureDefinition/Specimen-eu-lab"
+					]
+				},
+				"accessionIdentifier": {
+					"system": "http://example.org/fhir/chugasystem/5121829543"
+				},
+				"subject": {
+					"reference": "urn:uuid:2f63225a-91e7-4271-83f3-c18f74cee465"
+				},
+				"receivedTime": "2025-12-19T14:04:00Z",
+				"collection": {
+					"collectedDateTime": "2025-12-19T13:15:00Z"
+				}
+			}
+		},
+		{
+			"fullUrl": "urn:uuid:d7602bfc-713f-489e-9bab-ffe2d95008fc",
+			"resource": {
+				"resourceType": "ServiceRequest",
+				"id": "d7602bfc-713f-489e-9bab-ffe2d95008fc",
+				"identifier": [
+					{
+						"type": {
+							"coding": [
+								{
+									"system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+									"code": "PLAC"
+								}
+							]
+						},
+						"system": "http://example.org/fhir/chugasystem/5121829543"
+					},
+					{
+						"type": {
+							"coding": [
+								{
+									"system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+									"code": "FILL"
+								}
+							]
+						},
+						"system": "http://example.org/fhir/chugasystem/5121829543",
+						"value": "1829543"
+					}
+				],
+				"status": "active",
+				"intent": "order",
+				"priority": "routine",
+				"code": {
+					"coding": [
+						{
+							"system": "http://loinc.org",
+							"code": "14933-6",
+							"display": "A. Urique"
+						}
+					]
+				},
+				"subject": {
+					"reference": "urn:uuid:2f63225a-91e7-4271-83f3-c18f74cee465"
+				},
+				"authoredOn": "2025-12-19T14:04:00Z",
+				"requester": {
+					"type": "Practitioner",
+					"identifier": {
+						"system": "http://example.org",
+						"value": "DEFCDA"
+					}
+				}
+			}
+		},
+		{
+			"fullUrl": "urn:uuid:cd6260cb-eff7-40f1-ad21-348f64121fdb",
+			"resource": {
+				"resourceType": "Specimen",
+				"id": "cd6260cb-eff7-40f1-ad21-348f64121fdb",
+				"meta": {
+					"profile": [
+						"http://hl7.eu/fhir/laboratory/StructureDefinition/Specimen-eu-lab"
+					]
+				},
+				"accessionIdentifier": {
+					"system": "http://example.org/fhir/chugasystem/5121829543"
+				},
+				"subject": {
+					"reference": "urn:uuid:2f63225a-91e7-4271-83f3-c18f74cee465"
+				},
+				"receivedTime": "2025-12-19T14:04:00Z",
+				"collection": {
+					"collectedDateTime": "2025-12-19T13:15:00Z"
+				}
+			}
+		},
+		{
+			"fullUrl": "urn:uuid:69baa327-5aee-48c0-bfff-ac162fc04f15",
+			"resource": {
+				"resourceType": "ServiceRequest",
+				"id": "69baa327-5aee-48c0-bfff-ac162fc04f15",
+				"identifier": [
+					{
+						"type": {
+							"coding": [
+								{
+									"system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+									"code": "PLAC"
+								}
+							]
+						},
+						"system": "http://example.org/fhir/chugasystem/5121829543"
+					},
+					{
+						"type": {
+							"coding": [
+								{
+									"system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+									"code": "FILL"
+								}
+							]
+						},
+						"system": "http://example.org/fhir/chugasystem/5121829543",
+						"value": "1829543"
+					}
+				],
+				"status": "active",
+				"intent": "order",
+				"priority": "routine",
+				"code": {
+					"coding": [
+						{
+							"system": "http://loinc.org",
+							"code": "14682-9",
+							"display": "Créatinine"
+						}
+					]
+				},
+				"subject": {
+					"reference": "urn:uuid:2f63225a-91e7-4271-83f3-c18f74cee465"
+				},
+				"authoredOn": "2025-12-19T14:04:00Z",
+				"requester": {
+					"type": "Practitioner",
+					"identifier": {
+						"system": "http://example.org",
+						"value": "DEFCDA"
+					}
+				}
+			}
+		},
+		{
+			"fullUrl": "urn:uuid:43efb029-e8e0-461d-823a-f206a931765c",
+			"resource": {
+				"resourceType": "Specimen",
+				"id": "43efb029-e8e0-461d-823a-f206a931765c",
+				"meta": {
+					"profile": [
+						"http://hl7.eu/fhir/laboratory/StructureDefinition/Specimen-eu-lab"
+					]
+				},
+				"accessionIdentifier": {
+					"system": "http://example.org/fhir/chugasystem/5121829543"
+				},
+				"subject": {
+					"reference": "urn:uuid:2f63225a-91e7-4271-83f3-c18f74cee465"
+				},
+				"receivedTime": "2025-12-19T14:04:00Z",
+				"collection": {
+					"collectedDateTime": "2025-12-19T13:15:00Z"
+				}
+			}
+		},
+		{
+			"fullUrl": "urn:uuid:a82f3eb4-c3f7-4c3b-bfa2-a36ff05eec9c",
+			"resource": {
+				"resourceType": "ServiceRequest",
+				"id": "a82f3eb4-c3f7-4c3b-bfa2-a36ff05eec9c",
+				"identifier": [
+					{
+						"type": {
+							"coding": [
+								{
+									"system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+									"code": "PLAC"
+								}
+							]
+						},
+						"system": "http://example.org/fhir/chugasystem/5121829543"
+					},
+					{
+						"type": {
+							"coding": [
+								{
+									"system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+									"code": "FILL"
+								}
+							]
+						},
+						"system": "http://example.org/fhir/chugasystem/5121829543",
+						"value": "1829543"
+					}
+				],
+				"status": "active",
+				"intent": "order",
+				"priority": "routine",
+				"code": {
+					"coding": [
+						{
+							"system": "http://example.org/fhir/chugasystem",
+							"code": "DFG",
+							"display": "Débit filtr. glom."
+						}
+					]
+				},
+				"subject": {
+					"reference": "urn:uuid:2f63225a-91e7-4271-83f3-c18f74cee465"
+				},
+				"authoredOn": "2025-12-19T14:04:00Z",
+				"requester": {
+					"type": "Practitioner",
+					"identifier": {
+						"system": "http://example.org",
+						"value": "DEFCDA"
+					}
+				}
+			}
+		},
+		{
+			"fullUrl": "urn:uuid:b0e92810-c43e-4dc2-9716-e258ae2fd439",
+			"resource": {
+				"resourceType": "Specimen",
+				"id": "b0e92810-c43e-4dc2-9716-e258ae2fd439",
+				"meta": {
+					"profile": [
+						"http://hl7.eu/fhir/laboratory/StructureDefinition/Specimen-eu-lab"
+					]
+				},
+				"accessionIdentifier": {
+					"system": "http://example.org/fhir/chugasystem/5121829543"
+				},
+				"subject": {
+					"reference": "urn:uuid:2f63225a-91e7-4271-83f3-c18f74cee465"
+				},
+				"receivedTime": "2025-12-19T14:04:00Z",
+				"collection": {
+					"collectedDateTime": "2025-12-19T13:15:00Z"
+				}
+			}
+		},
+		{
+			"fullUrl": "urn:uuid:325a3d69-2448-47ed-8701-162d13f90cd1",
+			"resource": {
+				"resourceType": "ServiceRequest",
+				"id": "325a3d69-2448-47ed-8701-162d13f90cd1",
+				"identifier": [
+					{
+						"type": {
+							"coding": [
+								{
+									"system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+									"code": "PLAC"
+								}
+							]
+						},
+						"system": "http://example.org/fhir/chugasystem/5121829543"
+					},
+					{
+						"type": {
+							"coding": [
+								{
+									"system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+									"code": "FILL"
+								}
+							]
+						},
+						"system": "http://example.org/fhir/chugasystem/5121829543",
+						"value": "1829543"
+					}
+				],
+				"status": "active",
+				"intent": "order",
+				"priority": "routine",
+				"code": {
+					"coding": [
+						{
+							"system": "http://example.org/fhir/chugasystem",
+							"code": "OSMC",
+							"display": "Osmolarité (c)"
+						}
+					]
+				},
+				"subject": {
+					"reference": "urn:uuid:2f63225a-91e7-4271-83f3-c18f74cee465"
+				},
+				"authoredOn": "2025-12-19T14:04:00Z",
+				"requester": {
+					"type": "Practitioner",
+					"identifier": {
+						"system": "http://example.org",
+						"value": "DEFCDA"
+					}
+				}
+			}
+		},
+		{
+			"fullUrl": "urn:uuid:14d956bc-f6ec-4b2e-8f59-068529223f9a",
+			"resource": {
+				"resourceType": "Specimen",
+				"id": "14d956bc-f6ec-4b2e-8f59-068529223f9a",
+				"meta": {
+					"profile": [
+						"http://hl7.eu/fhir/laboratory/StructureDefinition/Specimen-eu-lab"
+					]
+				},
+				"accessionIdentifier": {
+					"system": "http://example.org/fhir/chugasystem/5121829543"
+				},
+				"subject": {
+					"reference": "urn:uuid:2f63225a-91e7-4271-83f3-c18f74cee465"
+				},
+				"receivedTime": "2025-12-19T14:04:00Z",
+				"collection": {
+					"collectedDateTime": "2025-12-19T13:15:00Z"
+				}
+			}
+		},
+		{
+			"fullUrl": "urn:uuid:5ba52561-36df-4489-9359-786b2374aa30",
+			"resource": {
+				"resourceType": "Observation",
+				"id": "5ba52561-36df-4489-9359-786b2374aa30",
+				"meta": {
+					"profile": [
+						"http://hl7.eu/fhir/laboratory/StructureDefinition/Observation-resultslab-eu-lab"
+					]
+				},
+				"status": "final",
+				"category": [
+					{
+						"coding": [
+							{
+								"system": "http://terminology.hl7.org/CodeSystem/observation-category",
+								"code": "laboratory"
+							}
+						]
+					}
+				],
+				"code": {
+					"coding": [
+						{
+							"system": "http://loinc.org",
+							"code": "1988-5",
+							"display": "Protéine C réactive"
+						}
+					]
+				},
+				"subject": {
+					"reference": "urn:uuid:2f63225a-91e7-4271-83f3-c18f74cee465"
+				},
+				"_effectiveDateTime": {
+					"extension": [
+						{
+							"url": "http://hl7.org/fhir/StructureDefinition/data-absent-reason",
+							"valueCode": "unknown"
+						}
+					]
+				},
+				"performer": [
+					{
+						"type": "Organization",
+						"identifier": {
+							"system": "http://example.org/fhir/chugasystem/10",
+							"value": "Bioch.IA"
+						},
+						"display": "10"
+					},
+					{
+						"type": "Practitioner",
+						"identifier": {
+							"system": "http://example.org/fhir/",
+							"value": "017"
+						},
+						"display": "Pr MOSSUZ Pascal"
+					}
+				],
+				"valueString": "< 3.0",
+				"interpretation": [
+					{
+						"coding": [
+							{
+								"system": "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation",
+								"code": "N"
+							}
+						]
+					}
+				],
+				"referenceRange": [
+					{
+						"text": "0.0 - 3.3"
+					}
+				]
+			}
+		},
+		{
+			"fullUrl": "urn:uuid:0d55f024-b625-42ef-ac35-49f4d3c6e0cd",
+			"resource": {
+				"resourceType": "Observation",
+				"id": "0d55f024-b625-42ef-ac35-49f4d3c6e0cd",
+				"meta": {
+					"profile": [
+						"http://hl7.eu/fhir/laboratory/StructureDefinition/Observation-resultslab-eu-lab"
+					]
+				},
+				"status": "final",
+				"category": [
+					{
+						"coding": [
+							{
+								"system": "http://terminology.hl7.org/CodeSystem/observation-category",
+								"code": "laboratory"
+							}
+						]
+					}
+				],
+				"code": {
+					"coding": [
+						{
+							"system": "http://loinc.org",
+							"code": "2951-2",
+							"display": "Sodium"
+						}
+					]
+				},
+				"subject": {
+					"reference": "urn:uuid:2f63225a-91e7-4271-83f3-c18f74cee465"
+				},
+				"_effectiveDateTime": {
+					"extension": [
+						{
+							"url": "http://hl7.org/fhir/StructureDefinition/data-absent-reason",
+							"valueCode": "unknown"
+						}
+					]
+				},
+				"performer": [
+					{
+						"type": "Organization",
+						"identifier": {
+							"system": "http://example.org/fhir/chugasystem/10",
+							"value": "Bioch.IA"
+						},
+						"display": "10"
+					},
+					{
+						"type": "Practitioner",
+						"identifier": {
+							"system": "http://example.org/fhir/",
+							"value": "017"
+						},
+						"display": "Pr MOSSUZ Pascal"
+					}
+				],
+				"valueQuantity": {
+					"value": 142,
+					"unit": "mmol/l",
+					"system": "http://unitsofmeasure.org",
+					"_code": {
+						"extension": [
+							{
+								"url": "http://hl7.org/fhir/StructureDefinition/data-absent-reason",
+								"valueCode": "unsupported"
+							}
+						]
+					}
+				},
+				"interpretation": [
+					{
+						"coding": [
+							{
+								"system": "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation",
+								"code": "N"
+							}
+						]
+					}
+				],
+				"referenceRange": [
+					{
+						"text": "136 - 145"
+					}
+				]
+			}
+		},
+		{
+			"fullUrl": "urn:uuid:413e0233-66c8-444a-861f-e42b194038fc",
+			"resource": {
+				"resourceType": "Observation",
+				"id": "413e0233-66c8-444a-861f-e42b194038fc",
+				"meta": {
+					"profile": [
+						"http://hl7.eu/fhir/laboratory/StructureDefinition/Observation-resultslab-eu-lab"
+					]
+				},
+				"status": "final",
+				"category": [
+					{
+						"coding": [
+							{
+								"system": "http://terminology.hl7.org/CodeSystem/observation-category",
+								"code": "laboratory"
+							}
+						]
+					}
+				],
+				"code": {
+					"coding": [
+						{
+							"system": "http://loinc.org",
+							"code": "2823-3",
+							"display": "Potassium"
+						}
+					]
+				},
+				"subject": {
+					"reference": "urn:uuid:2f63225a-91e7-4271-83f3-c18f74cee465"
+				},
+				"_effectiveDateTime": {
+					"extension": [
+						{
+							"url": "http://hl7.org/fhir/StructureDefinition/data-absent-reason",
+							"valueCode": "unknown"
+						}
+					]
+				},
+				"performer": [
+					{
+						"type": "Organization",
+						"identifier": {
+							"system": "http://example.org/fhir/chugasystem/10",
+							"value": "Bioch.IA"
+						},
+						"display": "10"
+					},
+					{
+						"type": "Practitioner",
+						"identifier": {
+							"system": "http://example.org/fhir/",
+							"value": "017"
+						},
+						"display": "Pr MOSSUZ Pascal"
+					}
+				],
+				"valueQuantity": {
+					"value": 4.5,
+					"unit": "mmol/l",
+					"system": "http://unitsofmeasure.org",
+					"_code": {
+						"extension": [
+							{
+								"url": "http://hl7.org/fhir/StructureDefinition/data-absent-reason",
+								"valueCode": "unsupported"
+							}
+						]
+					}
+				},
+				"interpretation": [
+					{
+						"coding": [
+							{
+								"system": "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation",
+								"code": "N"
+							}
+						]
+					}
+				],
+				"referenceRange": [
+					{
+						"text": "3.4 - 5.1"
+					}
+				]
+			}
+		},
+		{
+			"fullUrl": "urn:uuid:7497fa3c-60c1-480c-ad1b-ccdbc167b7b0",
+			"resource": {
+				"resourceType": "Observation",
+				"id": "7497fa3c-60c1-480c-ad1b-ccdbc167b7b0",
+				"meta": {
+					"profile": [
+						"http://hl7.eu/fhir/laboratory/StructureDefinition/Observation-resultslab-eu-lab"
+					]
+				},
+				"status": "final",
+				"category": [
+					{
+						"coding": [
+							{
+								"system": "http://terminology.hl7.org/CodeSystem/observation-category",
+								"code": "laboratory"
+							}
+						]
+					}
+				],
+				"code": {
+					"coding": [
+						{
+							"system": "http://loinc.org",
+							"code": "2075-0",
+							"display": "Chlorures"
+						}
+					]
+				},
+				"subject": {
+					"reference": "urn:uuid:2f63225a-91e7-4271-83f3-c18f74cee465"
+				},
+				"_effectiveDateTime": {
+					"extension": [
+						{
+							"url": "http://hl7.org/fhir/StructureDefinition/data-absent-reason",
+							"valueCode": "unknown"
+						}
+					]
+				},
+				"performer": [
+					{
+						"type": "Organization",
+						"identifier": {
+							"system": "http://example.org/fhir/chugasystem/10",
+							"value": "Bioch.IA"
+						},
+						"display": "10"
+					},
+					{
+						"type": "Practitioner",
+						"identifier": {
+							"system": "http://example.org/fhir/",
+							"value": "017"
+						},
+						"display": "Pr MOSSUZ Pascal"
+					}
+				],
+				"valueQuantity": {
+					"value": 104,
+					"unit": "mmol/l",
+					"system": "http://unitsofmeasure.org",
+					"_code": {
+						"extension": [
+							{
+								"url": "http://hl7.org/fhir/StructureDefinition/data-absent-reason",
+								"valueCode": "unsupported"
+							}
+						]
+					}
+				},
+				"interpretation": [
+					{
+						"coding": [
+							{
+								"system": "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation",
+								"code": "N"
+							}
+						]
+					}
+				],
+				"referenceRange": [
+					{
+						"text": "98 - 107"
+					}
+				]
+			}
+		},
+		{
+			"fullUrl": "urn:uuid:722c8ec5-df18-44e6-b8a0-c8c0e3eebcf6",
+			"resource": {
+				"resourceType": "Observation",
+				"id": "722c8ec5-df18-44e6-b8a0-c8c0e3eebcf6",
+				"meta": {
+					"profile": [
+						"http://hl7.eu/fhir/laboratory/StructureDefinition/Observation-resultslab-eu-lab"
+					]
+				},
+				"status": "final",
+				"category": [
+					{
+						"coding": [
+							{
+								"system": "http://terminology.hl7.org/CodeSystem/observation-category",
+								"code": "laboratory"
+							}
+						]
+					}
+				],
+				"code": {
+					"coding": [
+						{
+							"system": "http://loinc.org",
+							"code": "20565-8",
+							"display": "Bicarbonates"
+						}
+					]
+				},
+				"subject": {
+					"reference": "urn:uuid:2f63225a-91e7-4271-83f3-c18f74cee465"
+				},
+				"_effectiveDateTime": {
+					"extension": [
+						{
+							"url": "http://hl7.org/fhir/StructureDefinition/data-absent-reason",
+							"valueCode": "unknown"
+						}
+					]
+				},
+				"performer": [
+					{
+						"type": "Organization",
+						"identifier": {
+							"system": "http://example.org/fhir/chugasystem/10",
+							"value": "Bioch.IA"
+						},
+						"display": "10"
+					},
+					{
+						"type": "Practitioner",
+						"identifier": {
+							"system": "http://example.org/fhir/",
+							"value": "017"
+						},
+						"display": "Pr MOSSUZ Pascal"
+					}
+				],
+				"valueQuantity": {
+					"value": 28,
+					"unit": "mmol/l",
+					"system": "http://unitsofmeasure.org",
+					"_code": {
+						"extension": [
+							{
+								"url": "http://hl7.org/fhir/StructureDefinition/data-absent-reason",
+								"valueCode": "unsupported"
+							}
+						]
+					}
+				},
+				"interpretation": [
+					{
+						"coding": [
+							{
+								"system": "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation",
+								"code": "N"
+							}
+						]
+					}
+				],
+				"referenceRange": [
+					{
+						"text": "20 - 31"
+					}
+				]
+			}
+		},
+		{
+			"fullUrl": "urn:uuid:e9fdfa07-71a1-4ed5-8c51-b94117109ba9",
+			"resource": {
+				"resourceType": "Observation",
+				"id": "e9fdfa07-71a1-4ed5-8c51-b94117109ba9",
+				"meta": {
+					"profile": [
+						"http://hl7.eu/fhir/laboratory/StructureDefinition/Observation-resultslab-eu-lab"
+					]
+				},
+				"status": "final",
+				"category": [
+					{
+						"coding": [
+							{
+								"system": "http://terminology.hl7.org/CodeSystem/observation-category",
+								"code": "laboratory"
+							}
+						]
+					}
+				],
+				"code": {
+					"coding": [
+						{
+							"system": "http://loinc.org",
+							"code": "2885-2",
+							"display": "Protéines"
+						}
+					]
+				},
+				"subject": {
+					"reference": "urn:uuid:2f63225a-91e7-4271-83f3-c18f74cee465"
+				},
+				"_effectiveDateTime": {
+					"extension": [
+						{
+							"url": "http://hl7.org/fhir/StructureDefinition/data-absent-reason",
+							"valueCode": "unknown"
+						}
+					]
+				},
+				"performer": [
+					{
+						"type": "Organization",
+						"identifier": {
+							"system": "http://example.org/fhir/chugasystem/10",
+							"value": "Bioch.IA"
+						},
+						"display": "10"
+					},
+					{
+						"type": "Practitioner",
+						"identifier": {
+							"system": "http://example.org/fhir/",
+							"value": "017"
+						},
+						"display": "Pr MOSSUZ Pascal"
+					}
+				],
+				"valueQuantity": {
+					"value": 70,
+					"unit": "g/l",
+					"system": "http://unitsofmeasure.org",
+					"_code": {
+						"extension": [
+							{
+								"url": "http://hl7.org/fhir/StructureDefinition/data-absent-reason",
+								"valueCode": "unsupported"
+							}
+						]
+					}
+				},
+				"interpretation": [
+					{
+						"coding": [
+							{
+								"system": "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation",
+								"code": "N"
+							}
+						]
+					}
+				],
+				"referenceRange": [
+					{
+						"text": "57 - 82"
+					}
+				]
+			}
+		},
+		{
+			"fullUrl": "urn:uuid:cc845dfc-29f5-4972-872f-7eba0bc1b714",
+			"resource": {
+				"resourceType": "Observation",
+				"id": "cc845dfc-29f5-4972-872f-7eba0bc1b714",
+				"meta": {
+					"profile": [
+						"http://hl7.eu/fhir/laboratory/StructureDefinition/Observation-resultslab-eu-lab"
+					]
+				},
+				"status": "final",
+				"category": [
+					{
+						"coding": [
+							{
+								"system": "http://terminology.hl7.org/CodeSystem/observation-category",
+								"code": "laboratory"
+							}
+						]
+					}
+				],
+				"code": {
+					"coding": [
+						{
+							"system": "http://example.org/fhir/chugasystem",
+							"code": "TA",
+							"display": "Trou anionique"
+						}
+					]
+				},
+				"subject": {
+					"reference": "urn:uuid:2f63225a-91e7-4271-83f3-c18f74cee465"
+				},
+				"_effectiveDateTime": {
+					"extension": [
+						{
+							"url": "http://hl7.org/fhir/StructureDefinition/data-absent-reason",
+							"valueCode": "unknown"
+						}
+					]
+				},
+				"performer": [
+					{
+						"type": "Organization",
+						"identifier": {
+							"system": "http://example.org/fhir/chugasystem/10",
+							"value": "Bioch.IA"
+						},
+						"display": "10"
+					},
+					{
+						"type": "Practitioner",
+						"identifier": {
+							"system": "http://example.org/fhir/",
+							"value": "017"
+						},
+						"display": "Pr MOSSUZ Pascal"
+					}
+				],
+				"valueQuantity": {
+					"value": 14,
+					"unit": "mmol/l",
+					"system": "http://unitsofmeasure.org",
+					"_code": {
+						"extension": [
+							{
+								"url": "http://hl7.org/fhir/StructureDefinition/data-absent-reason",
+								"valueCode": "unsupported"
+							}
+						]
+					}
+				},
+				"interpretation": [
+					{
+						"coding": [
+							{
+								"system": "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation",
+								"code": "N"
+							}
+						]
+					}
+				],
+				"referenceRange": [
+					{
+						"text": "7 - 17"
+					}
+				]
+			}
+		},
+		{
+			"fullUrl": "urn:uuid:fcde19c2-800a-4d92-8b75-504bb2ad3d80",
+			"resource": {
+				"resourceType": "Observation",
+				"id": "fcde19c2-800a-4d92-8b75-504bb2ad3d80",
+				"meta": {
+					"profile": [
+						"http://hl7.eu/fhir/laboratory/StructureDefinition/Observation-resultslab-eu-lab"
+					]
+				},
+				"status": "final",
+				"category": [
+					{
+						"coding": [
+							{
+								"system": "http://terminology.hl7.org/CodeSystem/observation-category",
+								"code": "laboratory"
+							}
+						]
+					}
+				],
+				"code": {
+					"coding": [
+						{
+							"system": "http://loinc.org",
+							"code": "2000-8",
+							"display": "Calcium"
+						}
+					]
+				},
+				"subject": {
+					"reference": "urn:uuid:2f63225a-91e7-4271-83f3-c18f74cee465"
+				},
+				"_effectiveDateTime": {
+					"extension": [
+						{
+							"url": "http://hl7.org/fhir/StructureDefinition/data-absent-reason",
+							"valueCode": "unknown"
+						}
+					]
+				},
+				"performer": [
+					{
+						"type": "Organization",
+						"identifier": {
+							"system": "http://example.org/fhir/chugasystem/10",
+							"value": "Bioch.IA"
+						},
+						"display": "10"
+					},
+					{
+						"type": "Practitioner",
+						"identifier": {
+							"system": "http://example.org/fhir/",
+							"value": "017"
+						},
+						"display": "Pr MOSSUZ Pascal"
+					}
+				],
+				"valueQuantity": {
+					"value": 2.46,
+					"unit": "mmol/l",
+					"system": "http://unitsofmeasure.org",
+					"_code": {
+						"extension": [
+							{
+								"url": "http://hl7.org/fhir/StructureDefinition/data-absent-reason",
+								"valueCode": "unsupported"
+							}
+						]
+					}
+				},
+				"interpretation": [
+					{
+						"coding": [
+							{
+								"system": "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation",
+								"code": "N"
+							}
+						]
+					}
+				],
+				"referenceRange": [
+					{
+						"text": "2.18 - 2.60"
+					}
+				]
+			}
+		},
+		{
+			"fullUrl": "urn:uuid:70eba4ad-ecec-491d-9c34-81d0aa1dc74f",
+			"resource": {
+				"resourceType": "Observation",
+				"id": "70eba4ad-ecec-491d-9c34-81d0aa1dc74f",
+				"meta": {
+					"profile": [
+						"http://hl7.eu/fhir/laboratory/StructureDefinition/Observation-resultslab-eu-lab"
+					]
+				},
+				"status": "final",
+				"category": [
+					{
+						"coding": [
+							{
+								"system": "http://terminology.hl7.org/CodeSystem/observation-category",
+								"code": "laboratory"
+							}
+						]
+					}
+				],
+				"code": {
+					"coding": [
+						{
+							"system": "http://loinc.org",
+							"code": "14879-1",
+							"display": "Phosphore"
+						}
+					]
+				},
+				"subject": {
+					"reference": "urn:uuid:2f63225a-91e7-4271-83f3-c18f74cee465"
+				},
+				"_effectiveDateTime": {
+					"extension": [
+						{
+							"url": "http://hl7.org/fhir/StructureDefinition/data-absent-reason",
+							"valueCode": "unknown"
+						}
+					]
+				},
+				"performer": [
+					{
+						"type": "Organization",
+						"identifier": {
+							"system": "http://example.org/fhir/chugasystem/10",
+							"value": "Bioch.IA"
+						},
+						"display": "10"
+					},
+					{
+						"type": "Practitioner",
+						"identifier": {
+							"system": "http://example.org/fhir/",
+							"value": "017"
+						},
+						"display": "Pr MOSSUZ Pascal"
+					}
+				],
+				"valueQuantity": {
+					"value": 0.88,
+					"unit": "mmol/l",
+					"system": "http://unitsofmeasure.org",
+					"_code": {
+						"extension": [
+							{
+								"url": "http://hl7.org/fhir/StructureDefinition/data-absent-reason",
+								"valueCode": "unsupported"
+							}
+						]
+					}
+				},
+				"interpretation": [
+					{
+						"coding": [
+							{
+								"system": "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation",
+								"code": "N"
+							}
+						]
+					}
+				],
+				"referenceRange": [
+					{
+						"text": "0.78 - 1.65"
+					}
+				]
+			}
+		},
+		{
+			"fullUrl": "urn:uuid:b79d440e-6696-4615-b72a-ff74b9676458",
+			"resource": {
+				"resourceType": "Observation",
+				"id": "b79d440e-6696-4615-b72a-ff74b9676458",
+				"meta": {
+					"profile": [
+						"http://hl7.eu/fhir/laboratory/StructureDefinition/Observation-resultslab-eu-lab"
+					]
+				},
+				"status": "final",
+				"category": [
+					{
+						"coding": [
+							{
+								"system": "http://terminology.hl7.org/CodeSystem/observation-category",
+								"code": "laboratory"
+							}
+						]
+					}
+				],
+				"code": {
+					"coding": [
+						{
+							"system": "http://loinc.org",
+							"code": "14749-6",
+							"display": "Glucose Héparin"
+						}
+					]
+				},
+				"subject": {
+					"reference": "urn:uuid:2f63225a-91e7-4271-83f3-c18f74cee465"
+				},
+				"_effectiveDateTime": {
+					"extension": [
+						{
+							"url": "http://hl7.org/fhir/StructureDefinition/data-absent-reason",
+							"valueCode": "unknown"
+						}
+					]
+				},
+				"performer": [
+					{
+						"type": "Organization",
+						"identifier": {
+							"system": "http://example.org/fhir/chugasystem/10",
+							"value": "Bioch.IA"
+						},
+						"display": "10"
+					},
+					{
+						"type": "Practitioner",
+						"identifier": {
+							"system": "http://example.org/fhir/",
+							"value": "017"
+						},
+						"display": "Pr MOSSUZ Pascal"
+					}
+				],
+				"valueQuantity": {
+					"value": 4.9,
+					"unit": "mmol/l",
+					"system": "http://unitsofmeasure.org",
+					"_code": {
+						"extension": [
+							{
+								"url": "http://hl7.org/fhir/StructureDefinition/data-absent-reason",
+								"valueCode": "unsupported"
+							}
+						]
+					}
+				},
+				"interpretation": [
+					{
+						"coding": [
+							{
+								"system": "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation",
+								"code": "N"
+							}
+						]
+					}
+				],
+				"referenceRange": [
+					{
+						"text": "4.1 - 5.9"
+					}
+				]
+			}
+		},
+		{
+			"fullUrl": "urn:uuid:baa3d79c-fdf8-430c-a8a5-0eab8586bcc6",
+			"resource": {
+				"resourceType": "Observation",
+				"id": "baa3d79c-fdf8-430c-a8a5-0eab8586bcc6",
+				"meta": {
+					"profile": [
+						"http://hl7.eu/fhir/laboratory/StructureDefinition/Observation-resultslab-eu-lab"
+					]
+				},
+				"status": "final",
+				"category": [
+					{
+						"coding": [
+							{
+								"system": "http://terminology.hl7.org/CodeSystem/observation-category",
+								"code": "laboratory"
+							}
+						]
+					}
+				],
+				"code": {
+					"coding": [
+						{
+							"system": "http://loinc.org",
+							"code": "22700-9",
+							"display": "Urée"
+						}
+					]
+				},
+				"subject": {
+					"reference": "urn:uuid:2f63225a-91e7-4271-83f3-c18f74cee465"
+				},
+				"_effectiveDateTime": {
+					"extension": [
+						{
+							"url": "http://hl7.org/fhir/StructureDefinition/data-absent-reason",
+							"valueCode": "unknown"
+						}
+					]
+				},
+				"performer": [
+					{
+						"type": "Organization",
+						"identifier": {
+							"system": "http://example.org/fhir/chugasystem/10",
+							"value": "Bioch.IA"
+						},
+						"display": "10"
+					},
+					{
+						"type": "Practitioner",
+						"identifier": {
+							"system": "http://example.org/fhir/",
+							"value": "017"
+						},
+						"display": "Pr MOSSUZ Pascal"
+					}
+				],
+				"valueQuantity": {
+					"value": 7.8,
+					"unit": "mmol/l",
+					"system": "http://unitsofmeasure.org",
+					"_code": {
+						"extension": [
+							{
+								"url": "http://hl7.org/fhir/StructureDefinition/data-absent-reason",
+								"valueCode": "unsupported"
+							}
+						]
+					}
+				},
+				"interpretation": [
+					{
+						"coding": [
+							{
+								"system": "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation",
+								"code": "N"
+							}
+						]
+					}
+				],
+				"referenceRange": [
+					{
+						"text": "3.2 - 8.2"
+					}
+				]
+			}
+		},
+		{
+			"fullUrl": "urn:uuid:03649155-ef17-4e5c-a808-6eb25c65d9f4",
+			"resource": {
+				"resourceType": "Observation",
+				"id": "03649155-ef17-4e5c-a808-6eb25c65d9f4",
+				"meta": {
+					"profile": [
+						"http://hl7.eu/fhir/laboratory/StructureDefinition/Observation-resultslab-eu-lab"
+					]
+				},
+				"status": "final",
+				"category": [
+					{
+						"coding": [
+							{
+								"system": "http://terminology.hl7.org/CodeSystem/observation-category",
+								"code": "laboratory"
+							}
+						]
+					}
+				],
+				"code": {
+					"coding": [
+						{
+							"system": "http://loinc.org",
+							"code": "14933-6",
+							"display": "A. Urique"
+						}
+					]
+				},
+				"subject": {
+					"reference": "urn:uuid:2f63225a-91e7-4271-83f3-c18f74cee465"
+				},
+				"_effectiveDateTime": {
+					"extension": [
+						{
+							"url": "http://hl7.org/fhir/StructureDefinition/data-absent-reason",
+							"valueCode": "unknown"
+						}
+					]
+				},
+				"performer": [
+					{
+						"type": "Organization",
+						"identifier": {
+							"system": "http://example.org/fhir/chugasystem/10",
+							"value": "Bioch.IA"
+						},
+						"display": "10"
+					},
+					{
+						"type": "Practitioner",
+						"identifier": {
+							"system": "http://example.org/fhir/",
+							"value": "017"
+						},
+						"display": "Pr MOSSUZ Pascal"
+					}
+				],
+				"valueQuantity": {
+					"value": 344,
+					"unit": "µmol/l",
+					"system": "http://unitsofmeasure.org",
+					"_code": {
+						"extension": [
+							{
+								"url": "http://hl7.org/fhir/StructureDefinition/data-absent-reason",
+								"valueCode": "unsupported"
+							}
+						]
+					}
+				},
+				"interpretation": [
+					{
+						"coding": [
+							{
+								"system": "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation",
+								"code": "N"
+							}
+						]
+					}
+				],
+				"referenceRange": [
+					{
+						"text": "220 - 547"
+					}
+				]
+			}
+		},
+		{
+			"fullUrl": "urn:uuid:906176f5-b47b-4a12-82cb-4999d99a4aad",
+			"resource": {
+				"resourceType": "Observation",
+				"id": "906176f5-b47b-4a12-82cb-4999d99a4aad",
+				"meta": {
+					"profile": [
+						"http://hl7.eu/fhir/laboratory/StructureDefinition/Observation-resultslab-eu-lab"
+					]
+				},
+				"status": "final",
+				"category": [
+					{
+						"coding": [
+							{
+								"system": "http://terminology.hl7.org/CodeSystem/observation-category",
+								"code": "laboratory"
+							}
+						]
+					}
+				],
+				"code": {
+					"coding": [
+						{
+							"system": "http://loinc.org",
+							"code": "14682-9",
+							"display": "Créatinine"
+						}
+					]
+				},
+				"subject": {
+					"reference": "urn:uuid:2f63225a-91e7-4271-83f3-c18f74cee465"
+				},
+				"_effectiveDateTime": {
+					"extension": [
+						{
+							"url": "http://hl7.org/fhir/StructureDefinition/data-absent-reason",
+							"valueCode": "unknown"
+						}
+					]
+				},
+				"performer": [
+					{
+						"type": "Organization",
+						"identifier": {
+							"system": "http://example.org/fhir/chugasystem/10",
+							"value": "Bioch.IA"
+						},
+						"display": "10"
+					},
+					{
+						"type": "Practitioner",
+						"identifier": {
+							"system": "http://example.org/fhir/",
+							"value": "017"
+						},
+						"display": "Pr MOSSUZ Pascal"
+					}
+				],
+				"valueQuantity": {
+					"value": 168,
+					"unit": "µmol/l",
+					"system": "http://unitsofmeasure.org",
+					"_code": {
+						"extension": [
+							{
+								"url": "http://hl7.org/fhir/StructureDefinition/data-absent-reason",
+								"valueCode": "unsupported"
+							}
+						]
+					}
+				},
+				"interpretation": [
+					{
+						"coding": [
+							{
+								"system": "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation",
+								"code": "H"
+							}
+						]
+					}
+				],
+				"referenceRange": [
+					{
+						"text": "65 - 104"
+					}
+				]
+			}
+		},
+		{
+			"fullUrl": "urn:uuid:2cdc3018-870e-4de5-a5c1-aca723e1d0ad",
+			"resource": {
+				"resourceType": "Observation",
+				"id": "2cdc3018-870e-4de5-a5c1-aca723e1d0ad",
+				"meta": {
+					"profile": [
+						"http://hl7.eu/fhir/laboratory/StructureDefinition/Observation-resultslab-eu-lab"
+					]
+				},
+				"status": "final",
+				"category": [
+					{
+						"coding": [
+							{
+								"system": "http://terminology.hl7.org/CodeSystem/observation-category",
+								"code": "laboratory"
+							}
+						]
+					}
+				],
+				"code": {
+					"coding": [
+						{
+							"system": "http://loinc.org",
+							"code": "77147-7",
+							"display": "Débit de filtr. glom"
+						}
+					]
+				},
+				"subject": {
+					"reference": "urn:uuid:2f63225a-91e7-4271-83f3-c18f74cee465"
+				},
+				"_effectiveDateTime": {
+					"extension": [
+						{
+							"url": "http://hl7.org/fhir/StructureDefinition/data-absent-reason",
+							"valueCode": "unknown"
+						}
+					]
+				},
+				"performer": [
+					{
+						"type": "Organization",
+						"identifier": {
+							"system": "http://example.org/fhir/chugasystem/10",
+							"value": "Bioch.IA"
+						},
+						"display": "10"
+					},
+					{
+						"type": "Practitioner",
+						"identifier": {
+							"system": "http://example.org/fhir/",
+							"value": "017"
+						},
+						"display": "Pr MOSSUZ Pascal"
+					}
+				],
+				"valueQuantity": {
+					"value": 39,
+					"unit": "ml/mn/1,73m2",
+					"system": "http://unitsofmeasure.org",
+					"_code": {
+						"extension": [
+							{
+								"url": "http://hl7.org/fhir/StructureDefinition/data-absent-reason",
+								"valueCode": "unsupported"
+							}
+						]
+					}
+				}
+			}
+		},
+		{
+			"fullUrl": "urn:uuid:f7f4169c-155e-4eae-946b-ba40f7e4b212",
+			"resource": {
+				"resourceType": "Observation",
+				"id": "f7f4169c-155e-4eae-946b-ba40f7e4b212",
+				"meta": {
+					"profile": [
+						"http://hl7.eu/fhir/laboratory/StructureDefinition/Observation-resultslab-eu-lab"
+					]
+				},
+				"status": "final",
+				"category": [
+					{
+						"coding": [
+							{
+								"system": "http://terminology.hl7.org/CodeSystem/observation-category",
+								"code": "laboratory"
+							}
+						]
+					}
+				],
+				"code": {
+					"coding": [
+						{
+							"system": "http://loinc.org",
+							"code": "77147-7",
+							"display": "DFG Stade 3B"
+						}
+					]
+				},
+				"subject": {
+					"reference": "urn:uuid:2f63225a-91e7-4271-83f3-c18f74cee465"
+				},
+				"_effectiveDateTime": {
+					"extension": [
+						{
+							"url": "http://hl7.org/fhir/StructureDefinition/data-absent-reason",
+							"valueCode": "unknown"
+						}
+					]
+				},
+				"performer": [
+					{
+						"type": "Organization",
+						"identifier": {
+							"system": "http://example.org/fhir/chugasystem/10",
+							"value": "Bioch.IA"
+						},
+						"display": "10"
+					},
+					{
+						"type": "Practitioner",
+						"identifier": {
+							"system": "http://example.org/fhir/",
+							"value": "017"
+						},
+						"display": "Pr MOSSUZ Pascal"
+					}
+				],
+				"dataAbsentReason": {
+					"coding": [
+						{
+							"system": "http://terminology.hl7.org/CodeSystem/data-absent-reason",
+							"code": "unknown"
+						}
+					]
+				}
+			}
+		},
+		{
+			"fullUrl": "urn:uuid:6aeb2300-7b52-465f-bdb3-a550923438b2",
+			"resource": {
+				"resourceType": "Observation",
+				"id": "6aeb2300-7b52-465f-bdb3-a550923438b2",
+				"meta": {
+					"profile": [
+						"http://hl7.eu/fhir/laboratory/StructureDefinition/Observation-resultslab-eu-lab"
+					]
+				},
+				"status": "final",
+				"category": [
+					{
+						"coding": [
+							{
+								"system": "http://terminology.hl7.org/CodeSystem/observation-category",
+								"code": "laboratory"
+							}
+						]
+					}
+				],
+				"code": {
+					"coding": [
+						{
+							"system": "http://example.org/fhir/chugasystem",
+							"code": "OSMC",
+							"display": "Osmolarité (c)"
+						}
+					]
+				},
+				"subject": {
+					"reference": "urn:uuid:2f63225a-91e7-4271-83f3-c18f74cee465"
+				},
+				"_effectiveDateTime": {
+					"extension": [
+						{
+							"url": "http://hl7.org/fhir/StructureDefinition/data-absent-reason",
+							"valueCode": "unknown"
+						}
+					]
+				},
+				"performer": [
+					{
+						"type": "Organization",
+						"identifier": {
+							"system": "http://example.org/fhir/chugasystem/10",
+							"value": "Bioch.IA"
+						},
+						"display": "10"
+					},
+					{
+						"type": "Practitioner",
+						"identifier": {
+							"system": "http://example.org/fhir/",
+							"value": "017"
+						},
+						"display": "Pr MOSSUZ Pascal"
+					}
+				],
+				"valueQuantity": {
+					"value": 295,
+					"unit": "mOsm/l",
+					"system": "http://unitsofmeasure.org",
+					"_code": {
+						"extension": [
+							{
+								"url": "http://hl7.org/fhir/StructureDefinition/data-absent-reason",
+								"valueCode": "unsupported"
+							}
+						]
+					}
+				},
+				"interpretation": [
+					{
+						"coding": [
+							{
+								"system": "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation",
+								"code": "N"
+							}
+						]
+					}
+				],
+				"referenceRange": [
+					{
+						"text": "280 - 300"
+					}
+				]
+			}
+		},
+		{
+			"fullUrl": "urn:uuid:99133972-8f14-4fd2-a14f-bb1e364c7139",
+			"resource": {
+				"resourceType": "Observation",
+				"id": "99133972-8f14-4fd2-a14f-bb1e364c7139",
+				"meta": {
+					"profile": [
+						"http://hl7.eu/fhir/laboratory/StructureDefinition/Observation-resultslab-eu-lab"
+					]
+				},
+				"status": "final",
+				"category": [
+					{
+						"coding": [
+							{
+								"system": "http://terminology.hl7.org/CodeSystem/observation-category",
+								"code": "laboratory"
+							}
+						]
+					}
+				],
+				"code": {
+					"coding": [
+						{
+							"system": "http://loinc.org",
+							"code": "11502-2"
+						}
+					]
+				},
+				"subject": {
+					"reference": "urn:uuid:2f63225a-91e7-4271-83f3-c18f74cee465"
+				},
+				"_effectiveDateTime": {
+					"extension": [
+						{
+							"url": "http://hl7.org/fhir/StructureDefinition/data-absent-reason",
+							"valueCode": "unknown"
+						}
+					]
+				},
+				"performer": [
+					{
+						"extension": [
+							{
+								"url": "http://hl7.org/fhir/StructureDefinition/data-absent-reason",
+								"valueCode": "unknown"
+							}
+						]
+					}
+				],
+				"component": [
+					{
+						"extension": [
+							{
+								"url": "http://hl7.org/fhir/5.0/StructureDefinition/extension-Observation.value[x]",
+								"valueAttachment": {
+									"language": "fr",
+									"title": "rhp00792_J1.txt"
+								}
+							}
+						],
+						"code": {
+							"coding": [
+								{
+									"system": "http://loinc.org",
+									"code": "11502-2"
+								}
+							]
+						},
+						"valueString": "CR_EDITABLE"
+					}
+				]
+			}
+		},
+		{
+			"fullUrl": "urn:uuid:521854b2-7185-4ff3-b73a-37fcdfeb66af",
+			"resource": {
+				"resourceType": "Observation",
+				"id": "521854b2-7185-4ff3-b73a-37fcdfeb66af",
+				"meta": {
+					"profile": [
+						"http://hl7.eu/fhir/laboratory/StructureDefinition/Observation-resultslab-eu-lab"
+					]
+				},
+				"status": "final",
+				"category": [
+					{
+						"coding": [
+							{
+								"system": "http://terminology.hl7.org/CodeSystem/observation-category",
+								"code": "laboratory"
+							}
+						]
+					}
+				],
+				"code": {
+					"coding": [
+						{
+							"system": "http://loinc.org",
+							"code": "11502-2"
+						}
+					]
+				},
+				"subject": {
+					"reference": "urn:uuid:2f63225a-91e7-4271-83f3-c18f74cee465"
+				},
+				"_effectiveDateTime": {
+					"extension": [
+						{
+							"url": "http://hl7.org/fhir/StructureDefinition/data-absent-reason",
+							"valueCode": "unknown"
+						}
+					]
+				},
+				"performer": [
+					{
+						"extension": [
+							{
+								"url": "http://hl7.org/fhir/StructureDefinition/data-absent-reason",
+								"valueCode": "unknown"
+							}
+						]
+					}
+				],
+				"component": [
+					{
+						"extension": [
+							{
+								"url": "http://hl7.org/fhir/5.0/StructureDefinition/extension-Observation.value[x]",
+								"valueAttachment": {
+									"language": "fr",
+									"title": "rhp00792.PDF"
+								}
+							}
+						],
+						"code": {
+							"coding": [
+								{
+									"system": "http://loinc.org",
+									"code": "11502-2"
+								}
+							]
+						},
+						"valueString": "CR_PDF"
+					}
+				]
+			}
+		}
+	]
+}
