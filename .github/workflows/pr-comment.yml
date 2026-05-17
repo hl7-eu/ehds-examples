@@ -174,6 +174,7 @@ jobs:
 
       - name: Render filtered summary (errors/fatal only)
         if: steps.build_comment.outputs.use_filtered_renderer == 'true'
+        continue-on-error: true
         uses: patrick-werner/validation-outcome-markdown-renderer@v1
         with:
           bundle-file: .ci-comment/validation-errors-only.json
@@ -181,6 +182,7 @@ jobs:
           pr-summary-path: .ci-comment/pr-summary-errors-only-rendered.md
 
       - name: Compose final comment body
+        if: always()
         shell: bash
         run: |
           set -euo pipefail
@@ -245,7 +247,7 @@ jobs:
           mv "$FINAL_FILE" "$COMMENT_FILE"
 
       - name: Post sticky PR comment
-        if: steps.build_comment.outputs.has_pr == 'true'
+        if: always() && steps.build_comment.outputs.has_pr == 'true'
         uses: marocchino/sticky-pull-request-comment@v3
         with:
           header: fhir-validation
