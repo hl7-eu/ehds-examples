@@ -94,7 +94,7 @@ jobs:
 
       - name: Post sticky PR comment
         if: steps.build_comment.outputs.has_pr == 'true'
-        uses: marocchino/sticky-pull-request-comment@v2
+        uses: marocchino/sticky-pull-request-comment@v3
         with:
           header: fhir-validation
           number: ${{ steps.build_comment.outputs.pr_number }}
