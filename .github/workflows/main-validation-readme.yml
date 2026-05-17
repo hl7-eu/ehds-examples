@@ -1,0 +1,503 @@
+name: Main Validation + README
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  validate-and-update-readme:
+    name: Validate all examples and regenerate README
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Collect all example files
+        id: collect_files
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mkdir -p .ci
+          : > .ci/target-files.txt
+          : > .ci/resolution-contexts.txt
+          : > .ci/folder-order.txt
+          : > .ci/subfolder-order.txt
+          : > .ci/file-group-map.tsv
+
+          FOLDERS=(base eps hdr lab mpd)
+          FILE_COUNT=0
+          CONTEXT_COUNT=0
+          declare -A SEEN_GROUPS=()
+
+          for folder in "${FOLDERS[@]}"; do
+            echo "$folder" >> .ci/folder-order.txt
+
+            if [[ ! -d "$folder" ]]; then
+              continue
+            fi
+
+            echo "$folder" >> .ci/resolution-contexts.txt
+            CONTEXT_COUNT=$((CONTEXT_COUNT + 1))
+
+            while IFS= read -r subdir; do
+              [[ -z "$subdir" ]] && continue
+              group="$folder/$(basename "$subdir")"
+              if [[ -z "${SEEN_GROUPS[$group]:-}" ]]; then
+                echo "$group" >> .ci/subfolder-order.txt
+                SEEN_GROUPS["$group"]=1
+              fi
+            done < <(find "$folder" -mindepth 1 -maxdepth 1 -type d | sort)
+
+            while IFS= read -r file; do
+              [[ -z "$file" ]] && continue
+              echo "$file" >> .ci/target-files.txt
+              FILE_COUNT=$((FILE_COUNT + 1))
+
+              rest="${file#${folder}/}"
+              if [[ "$rest" == */* ]]; then
+                group="$folder/${rest%%/*}"
+              else
+                group="$folder/(root)"
+              fi
+
+              printf '%s\t%s\n' "$file" "$group" >> .ci/file-group-map.tsv
+
+              if [[ -z "${SEEN_GROUPS[$group]:-}" ]]; then
+                echo "$group" >> .ci/subfolder-order.txt
+                SEEN_GROUPS["$group"]=1
+              fi
+            done < <(find "$folder" -type f \( -name '*.json' -o -name '*.xml' \) | sort)
+          done
+
+          if [[ $FILE_COUNT -eq 0 ]]; then
+            echo "No JSON/XML files found for validation in scoped folders."
+            echo "has_target_files=false" >> "$GITHUB_OUTPUT"
+            echo "target_file_count=0" >> "$GITHUB_OUTPUT"
+          else
+            echo "Collected $FILE_COUNT file(s) for full main validation."
+            echo "has_target_files=true" >> "$GITHUB_OUTPUT"
+            echo "target_file_count=$FILE_COUNT" >> "$GITHUB_OUTPUT"
+          fi
+
+          if [[ $CONTEXT_COUNT -eq 0 ]]; then
+            echo "No resolution contexts available."
+          fi
+
+      - name: Skip summary when there is nothing to validate
+        if: steps.collect_files.outputs.has_target_files != 'true'
+        run: |
+          echo "No relevant FHIR JSON/XML files found in scoped folders. Validation skipped." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Validate meta.profile presence and prefix
+        id: precheck
+        if: steps.collect_files.outputs.has_target_files == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          REQUIRED_PREFIX="http://hl7.eu/fhir/"
+          MISSING_PROFILE=()
+          MISSING_REQUIRED_PREFIX=()
+          PRECHECK_ERRORS=0
+
+          : > .ci/precheck-missing-profile.txt
+          : > .ci/precheck-missing-prefix.txt
+
+          while IFS= read -r file; do
+            [[ -z "$file" ]] && continue
+
+            case "$file" in
+              *.json)
+                PROFILE_LINES="$(jq -r '.meta.profile[]? // empty' "$file" 2>/dev/null || true)"
+                ;;
+              *.xml)
+                if command -v xmllint >/dev/null 2>&1; then
+                  PROFILE_LINES="$(
+                    xmllint --xpath '//*[local-name()="meta"]/*[local-name()="profile"]/@value' "$file" 2>/dev/null \
+                      | grep -oE 'value="[^"]+"' \
+                      | sed -E 's/value="([^"]+)"/\1/' || true
+                  )"
+                else
+                  PROFILE_LINES="$(
+                    grep -oE '<([[:alnum:]_:-]+:)?profile[^>]*[[:space:]]value="[^"]+"' "$file" \
+                      | sed -E 's/.*[[:space:]]value="([^"]+)".*/\1/' || true
+                  )"
+                fi
+                ;;
+              *)
+                continue
+                ;;
+            esac
+
+            if [[ -z "$PROFILE_LINES" ]]; then
+              MISSING_PROFILE+=("$file")
+              echo "$file" >> .ci/precheck-missing-profile.txt
+              PRECHECK_ERRORS=$((PRECHECK_ERRORS + 1))
+              continue
+            fi
+
+            HAS_REQUIRED_PREFIX=false
+            while IFS= read -r profile; do
+              [[ -z "$profile" ]] && continue
+              if [[ "$profile" == "$REQUIRED_PREFIX"* ]]; then
+                HAS_REQUIRED_PREFIX=true
+                break
+              fi
+            done <<< "$PROFILE_LINES"
+
+            if [[ "$HAS_REQUIRED_PREFIX" != "true" ]]; then
+              MISSING_REQUIRED_PREFIX+=("$file")
+              echo "$file" >> .ci/precheck-missing-prefix.txt
+              PRECHECK_ERRORS=$((PRECHECK_ERRORS + 1))
+            fi
+          done < .ci/target-files.txt
+
+          if [[ ${#MISSING_PROFILE[@]} -gt 0 || ${#MISSING_REQUIRED_PREFIX[@]} -gt 0 ]]; then
+            echo "meta.profile precheck failed."
+            echo "Each resource must contain meta.profile, and at least one meta.profile entry must start with: $REQUIRED_PREFIX"
+            echo
+
+            if [[ ${#MISSING_PROFILE[@]} -gt 0 ]]; then
+              echo "Resources missing meta.profile:"
+              for file in "${MISSING_PROFILE[@]}"; do
+                echo " - $file"
+              done
+              echo
+            fi
+
+            if [[ ${#MISSING_REQUIRED_PREFIX[@]} -gt 0 ]]; then
+              echo "Resources where no meta.profile entry starts with $REQUIRED_PREFIX:"
+              for file in "${MISSING_REQUIRED_PREFIX[@]}"; do
+                echo " - $file"
+              done
+              echo
+            fi
+          fi
+
+          echo "precheck_error_count=$PRECHECK_ERRORS" >> "$GITHUB_OUTPUT"
+          if [[ $PRECHECK_ERRORS -gt 0 ]]; then
+            echo "precheck_exit_code=1" >> "$GITHUB_OUTPUT"
+          else
+            echo "precheck_exit_code=0" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Set up Java
+        if: steps.collect_files.outputs.has_target_files == 'true'
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Resolve validator download URL
+        id: validator_meta
+        if: steps.collect_files.outputs.has_target_files == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          VALIDATOR_URL="https://github.com/hapifhir/org.hl7.fhir.core/releases/latest/download/validator_cli.jar"
+          LATEST_RELEASE_API="https://api.github.com/repos/hapifhir/org.hl7.fhir.core/releases/latest"
+          LATEST_RELEASE_JSON="$(curl -fsSL "$LATEST_RELEASE_API" || true)"
+
+          RELEASE_TAG="$(
+            printf '%s' "$LATEST_RELEASE_JSON" \
+              | sed -n 's/.*"tag_name"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' \
+              | head -n 1
+          )"
+
+          if [[ -z "$RELEASE_TAG" ]]; then
+            RELEASE_TAG="latest"
+          fi
+
+          CACHE_SUFFIX="$(echo "$RELEASE_TAG" | sed 's/[^a-zA-Z0-9._-]/-/g')"
+
+          echo "validator_url=$VALIDATOR_URL" >> "$GITHUB_OUTPUT"
+          echo "release_tag=$RELEASE_TAG" >> "$GITHUB_OUTPUT"
+          echo "cache_key=validator-cli-${CACHE_SUFFIX}" >> "$GITHUB_OUTPUT"
+
+      - name: Restore cached validator
+        if: steps.collect_files.outputs.has_target_files == 'true'
+        id: validator_cache
+        uses: actions/cache@v4
+        with:
+          path: .cache/fhir-validator/validator_cli.jar
+          key: ${{ runner.os }}-${{ steps.validator_meta.outputs.cache_key }}
+          restore-keys: |
+            ${{ runner.os }}-validator-cli-
+
+      - name: Download validator if cache miss
+        if: steps.collect_files.outputs.has_target_files == 'true' && steps.validator_cache.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mkdir -p .cache/fhir-validator
+          curl -fsSL "${{ steps.validator_meta.outputs.validator_url }}" -o .cache/fhir-validator/validator_cli.jar
+
+      - name: Run Java FHIR validator on all scoped files
+        id: run_validator
+        if: steps.collect_files.outputs.has_target_files == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          declare -a VALIDATOR_ARGS=()
+
+          while IFS= read -r folder; do
+            [[ -z "$folder" ]] && continue
+            VALIDATOR_ARGS+=("-resolution-context" "$folder")
+          done < .ci/resolution-contexts.txt
+
+          VALIDATOR_ARGS+=("-ig" "hl7.fhir.eu.mpd#current")
+          VALIDATOR_ARGS+=("-ig" "hl7.fhir.eu.laboratory#2.0.0")
+          VALIDATOR_ARGS+=("-ig" "hl7.fhir.eu.eps#current")
+          VALIDATOR_ARGS+=("-ig" "hl7.fhir.eu.hdr#current")
+          VALIDATOR_ARGS+=("-ig" "hl7.fhir.eu.base#2.0.0")
+
+          VALIDATOR_ARGS+=("-allow-example-urls" "true")
+          VALIDATOR_ARGS+=("-html-output" "validation.html")
+          VALIDATOR_ARGS+=("-output" "validation.json")
+          VALIDATOR_ARGS+=("-show-message-ids")
+          VALIDATOR_ARGS+=("-extension" "any")
+          VALIDATOR_ARGS+=("-display-issues-are-warnings")
+
+          while IFS= read -r file; do
+            [[ -z "$file" ]] && continue
+            VALIDATOR_ARGS+=("$file")
+          done < .ci/target-files.txt
+
+          set +e
+          java -jar .cache/fhir-validator/validator_cli.jar "${VALIDATOR_ARGS[@]}" 2>&1 | tee validator-cli.log
+          EXIT_CODE=$?
+          set -e
+
+          echo "validator_exit_code=$EXIT_CODE" >> "$GITHUB_OUTPUT"
+
+      - name: Build subfolder error counts
+        id: build_counts
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          : > .ci/subfolder-error-counts.tsv
+          declare -A COUNTS=()
+          declare -a GROUP_ORDER=()
+
+          if [[ -f .ci/subfolder-order.txt ]]; then
+            while IFS= read -r group; do
+              [[ -z "$group" ]] && continue
+              if [[ -z "${COUNTS[$group]+x}" ]]; then
+                COUNTS["$group"]=0
+                GROUP_ORDER+=("$group")
+              fi
+            done < .ci/subfolder-order.txt
+          fi
+
+          declare -A FILE_TO_GROUP=()
+          declare -A BASENAME_TO_GROUP=()
+          if [[ -f .ci/file-group-map.tsv ]]; then
+            while IFS=$'\t' read -r file group; do
+              [[ -z "$file" || -z "$group" ]] && continue
+              FILE_TO_GROUP["$file"]="$group"
+
+              base_name="$(basename "$file")"
+              if [[ -z "${BASENAME_TO_GROUP[$base_name]:-}" ]]; then
+                BASENAME_TO_GROUP["$base_name"]="$group"
+              elif [[ "${BASENAME_TO_GROUP[$base_name]}" != "$group" ]]; then
+                BASENAME_TO_GROUP["$base_name"]="__ambiguous__"
+              fi
+            done < .ci/file-group-map.tsv
+          fi
+
+          increment_group_by_file() {
+            local file="$1"
+            local group="${FILE_TO_GROUP[$file]:-}"
+            if [[ -n "$group" && -n "${COUNTS[$group]+x}" ]]; then
+              COUNTS["$group"]=$((COUNTS[$group] + 1))
+            fi
+          }
+
+          if [[ -f .ci/precheck-missing-profile.txt ]]; then
+            while IFS= read -r file; do
+              [[ -z "$file" ]] && continue
+              increment_group_by_file "$file"
+            done < .ci/precheck-missing-profile.txt
+          fi
+
+          if [[ -f .ci/precheck-missing-prefix.txt ]]; then
+            while IFS= read -r file; do
+              [[ -z "$file" ]] && continue
+              increment_group_by_file "$file"
+            done < .ci/precheck-missing-prefix.txt
+          fi
+
+          if [[ -f validation.json ]]; then
+            jq -r '
+              (
+                if .resourceType == "Bundle" then .entry[]?.resource
+                elif .resourceType == "OperationOutcome" then .
+                else empty end
+              ) as $res
+              | select($res.resourceType == "OperationOutcome")
+              | (
+                  ($res.extension[]? | select(.url == "http://hl7.org/fhir/StructureDefinition/operationoutcome-file") | .valueString)
+                  // ""
+                ) as $rawPath
+              | $res.issue[]?
+              | select(.severity == "error")
+              | $rawPath
+            ' validation.json > .ci/validator-error-paths.txt || true
+
+            while IFS= read -r raw; do
+              [[ -z "$raw" ]] && continue
+              raw="${raw#./}"
+              mapped=""
+
+              for known_file in "${!FILE_TO_GROUP[@]}"; do
+                if [[ "$raw" == "$known_file" || "$raw" == */"$known_file" ]]; then
+                  mapped="${FILE_TO_GROUP[$known_file]}"
+                  break
+                fi
+              done
+
+              if [[ -z "$mapped" ]]; then
+                base_name="$(basename "$raw")"
+                candidate="${BASENAME_TO_GROUP[$base_name]:-}"
+                if [[ -n "$candidate" && "$candidate" != "__ambiguous__" ]]; then
+                  mapped="$candidate"
+                fi
+              fi
+
+              if [[ -n "$mapped" && -n "${COUNTS[$mapped]+x}" ]]; then
+                COUNTS["$mapped"]=$((COUNTS[$mapped] + 1))
+              fi
+            done < .ci/validator-error-paths.txt
+          fi
+
+          TOTAL_ERRORS=0
+          for group in "${GROUP_ORDER[@]}"; do
+            count="${COUNTS[$group]}"
+            TOTAL_ERRORS=$((TOTAL_ERRORS + count))
+            printf '%s\t%s\n' "$group" "$count" >> .ci/subfolder-error-counts.tsv
+          done
+
+          echo "total_errors=$TOTAL_ERRORS" >> "$GITHUB_OUTPUT"
+
+      - name: Render generated README
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          {
+            echo "# EHDS FHIR Examples"
+            echo
+            echo "This README is generated from \`main\` branch validation results."
+            echo
+            echo "- Detailed documentation (validation rules, CI details, local usage): [docs/README-details.md](docs/README-details.md)"
+            echo
+            echo "## Included Example Folders"
+            echo
+
+            while IFS= read -r folder; do
+              [[ -z "$folder" ]] && continue
+
+              if [[ -d "$folder" ]]; then
+                echo "- \`$folder/\`"
+                while IFS= read -r subdir; do
+                  [[ -z "$subdir" ]] && continue
+                  echo "  - \`$subdir/\`"
+                done < <(find "$folder" -mindepth 1 -type d | sort)
+              else
+                echo "- \`$folder/\` (missing)"
+              fi
+            done < .ci/folder-order.txt
+
+            echo
+            echo "## Validation Status (Errors)"
+            echo
+            echo "| Subfolder | Status | Errors |"
+            echo "| --- | --- | ---: |"
+
+            if [[ -s .ci/subfolder-error-counts.tsv ]]; then
+              while IFS=$'\t' read -r group count; do
+                [[ -z "$group" ]] && continue
+                if [[ "$count" -gt 0 ]]; then
+                  status="❌"
+                else
+                  status="✅"
+                fi
+                echo "| \`$group\` | $status | $count |"
+              done < .ci/subfolder-error-counts.tsv
+            else
+              echo "| _No subfolders found_ | ✅ | 0 |"
+            fi
+
+            echo
+            echo "> Status values are automatically recalculated on \`main\` by the \`Main Validation + README\` workflow."
+          } > README.md
+
+      - name: Commit README updates
+        if: github.ref == 'refs/heads/main'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if git diff --quiet -- README.md docs/README-details.md; then
+            echo "No README changes to commit."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md docs/README-details.md
+          git commit -m "chore: refresh generated README from main validation [skip ci]"
+          git push
+
+      - name: Upload validation artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: main-validation-artifacts
+          path: |
+            validation.json
+            validation.html
+            validator-cli.log
+            .ci/subfolder-error-counts.tsv
+            .ci/target-files.txt
+          if-no-files-found: warn
+
+      - name: Fail if validation found errors
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          PRECHECK_EXIT="${{ steps.precheck.outputs.precheck_exit_code }}"
+          VALIDATOR_EXIT="${{ steps.run_validator.outputs.validator_exit_code }}"
+          TOTAL_ERRORS="${{ steps.build_counts.outputs.total_errors }}"
+
+          if [[ -z "$PRECHECK_EXIT" ]]; then
+            PRECHECK_EXIT="0"
+          fi
+          if [[ -z "$VALIDATOR_EXIT" ]]; then
+            VALIDATOR_EXIT="0"
+          fi
+          if [[ -z "$TOTAL_ERRORS" ]]; then
+            TOTAL_ERRORS="0"
+          fi
+
+          if [[ "$PRECHECK_EXIT" != "0" || "$VALIDATOR_EXIT" != "0" || "$TOTAL_ERRORS" != "0" ]]; then
+            echo "Main validation found issues. precheck_exit=$PRECHECK_EXIT validator_exit=$VALIDATOR_EXIT total_errors=$TOTAL_ERRORS"
+            exit 1
+          fi
+
+          echo "Main validation finished successfully with zero errors."
