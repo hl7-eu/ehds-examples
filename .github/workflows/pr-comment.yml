@@ -209,6 +209,25 @@ jobs:
             fi
           fi
 
+          # Final hard clamp with safety margin for sticky action internals/markers.
+          FINAL_MAX_BYTES=62000
+          FINAL_BYTES="$(wc -c < "$COMMENT_FILE" | tr -d ' ')"
+          if [[ "$FINAL_BYTES" -gt "$FINAL_MAX_BYTES" ]]; then
+            echo "Final comment still too large ($FINAL_BYTES bytes). Applying hard size clamp."
+            FINAL_SUFFIX=$'\n\n...[comment hard-clamped to avoid GitHub 65536 limit]\n'
+            FINAL_SUFFIX_BYTES="$(printf '%s' "$FINAL_SUFFIX" | wc -c | tr -d ' ')"
+            FINAL_ALLOWED_BYTES=$((FINAL_MAX_BYTES - FINAL_SUFFIX_BYTES))
+            if [[ "$FINAL_ALLOWED_BYTES" -lt 0 ]]; then
+              FINAL_ALLOWED_BYTES=0
+            fi
+
+            {
+              head -c "$FINAL_ALLOWED_BYTES" "$COMMENT_FILE"
+              printf '%s' "$FINAL_SUFFIX"
+            } > .ci-comment/pr-summary-final.md
+            mv .ci-comment/pr-summary-final.md "$COMMENT_FILE"
+          fi
+
           echo "has_pr=true" >> "$GITHUB_OUTPUT"
           echo "pr_number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
 
