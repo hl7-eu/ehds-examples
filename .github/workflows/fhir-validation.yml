@@ -144,6 +144,87 @@ jobs:
         run: |
           echo "No relevant FHIR JSON/XML changes were detected in tracked spec folders. Validation skipped." >> "$GITHUB_STEP_SUMMARY"
 
+      - name: Validate meta.profile presence and prefix
+        if: steps.collect_files.outputs.has_target_files == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          REQUIRED_PREFIX="http://hl7.eu/fhir/"
+          MISSING_PROFILE=()
+          MISSING_REQUIRED_PREFIX=()
+
+          while IFS= read -r file; do
+            [[ -z "$file" ]] && continue
+
+            case "$file" in
+              *.json)
+                PROFILE_LINES="$(jq -r '.meta.profile[]? // empty' "$file" 2>/dev/null || true)"
+                ;;
+              *.xml)
+                if command -v xmllint >/dev/null 2>&1; then
+                  PROFILE_LINES="$(
+                    xmllint --xpath '//*[local-name()="meta"]/*[local-name()="profile"]/@value' "$file" 2>/dev/null \
+                      | grep -oE 'value="[^"]+"' \
+                      | sed -E 's/value="([^"]+)"/\1/' || true
+                  )"
+                else
+                  PROFILE_LINES="$(
+                    grep -oE '<([[:alnum:]_:-]+:)?profile[^>]*[[:space:]]value="[^"]+"' "$file" \
+                      | sed -E 's/.*[[:space:]]value="([^"]+)".*/\1/' || true
+                  )"
+                fi
+                ;;
+              *)
+                continue
+                ;;
+            esac
+
+            if [[ -z "$PROFILE_LINES" ]]; then
+              MISSING_PROFILE+=("$file")
+              continue
+            fi
+
+            HAS_REQUIRED_PREFIX=false
+            while IFS= read -r profile; do
+              [[ -z "$profile" ]] && continue
+              if [[ "$profile" == "$REQUIRED_PREFIX"* ]]; then
+                HAS_REQUIRED_PREFIX=true
+                break
+              fi
+            done <<< "$PROFILE_LINES"
+
+            if [[ "$HAS_REQUIRED_PREFIX" != "true" ]]; then
+              MISSING_REQUIRED_PREFIX+=("$file")
+            fi
+          done < .ci/target-files.txt
+
+          if [[ ${#MISSING_PROFILE[@]} -gt 0 || ${#MISSING_REQUIRED_PREFIX[@]} -gt 0 ]]; then
+            echo "meta.profile precheck failed."
+            echo "Each resource must contain meta.profile, and at least one meta.profile entry must start with: $REQUIRED_PREFIX"
+            echo
+
+            if [[ ${#MISSING_PROFILE[@]} -gt 0 ]]; then
+              echo "Resources missing meta.profile:"
+              for file in "${MISSING_PROFILE[@]}"; do
+                echo " - $file"
+              done
+              echo
+            fi
+
+            if [[ ${#MISSING_REQUIRED_PREFIX[@]} -gt 0 ]]; then
+              echo "Resources where no meta.profile entry starts with $REQUIRED_PREFIX:"
+              for file in "${MISSING_REQUIRED_PREFIX[@]}"; do
+                echo " - $file"
+              done
+              echo
+            fi
+
+            exit 1
+          fi
+
+          echo "meta.profile precheck passed for all candidate resources."
+
       - name: Set up Java
         if: steps.collect_files.outputs.has_target_files == 'true'
         uses: actions/setup-java@v4

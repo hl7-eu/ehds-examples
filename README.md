@@ -23,7 +23,8 @@ Validation behavior:
 1. Detects changed files in the PR.
 2. Selects changed top-level spec folders from: `base`, `eps`, `lab`, `mpd`.
 3. For each changed folder path in those domains, collects all `*.json` and `*.xml` files recursively from that folder.
-4. Runs the Java FHIR validator with:
+4. Runs a precheck: each resource must have `meta.profile`, and at least one profile entry must start with `http://hl7.eu/fhir/`.
+5. Runs the Java FHIR validator with:
    - `-allow-example-urls true`
    - `-html-output validation.html`
    - `-output validation.json`
@@ -53,7 +54,10 @@ Loaded IG packages:
 
 ## Failure Conditions
 
-The `FHIR Validation` check fails when the Java validator reports errors (non-zero exit code).
+The `FHIR Validation` check fails when:
+- at least one resource is missing `meta.profile`
+- no `meta.profile` entry starts with `http://hl7.eu/fhir/` for at least one resource
+- the Java validator reports errors (non-zero exit code)
 
 ## Local Validation Example
 
