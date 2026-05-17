@@ -356,7 +356,7 @@ jobs:
 
       - name: Upload PR metadata artifact
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: fhir-validation-pr-meta
           path: .ci/pr-meta.json
@@ -365,7 +365,7 @@ jobs:
       - name: Upload PR summary artifact
         id: upload_summary_report
         if: always() && steps.collect_files.outputs.has_target_files == 'true'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: fhir-validation-pr-summary
           path: pr-summary.md
@@ -374,7 +374,7 @@ jobs:
       - name: Upload HTML validation report
         id: upload_html_report
         if: always() && steps.collect_files.outputs.has_target_files == 'true'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: fhir-validation-html-report
           path: validation.html
