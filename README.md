@@ -1,86 +1,24 @@
 # EHDS FHIR Examples
 
-This repository contains FHIR example content for EHDS-related implementation guide areas.
+This README is generated from `main` branch validation results.
 
-## Repository Structure
+- Detailed documentation (validation rules, CI details, local usage): [docs/README-details.md](docs/README-details.md)
 
-Top-level folders are organized by specification domain:
+## Included Example Folders
 
-- `base`
-- `eps`
-- `imaging`
-- `lab`
-- `mpd`
+- `base/`
+- `eps/`
+- `hdr/`
+- `lab/`
+  - `lab/de-mii-examples/`
+  - `lab/de-mii-examples-test/`
+- `mpd/`
 
-For pull requests, contributors should ideally create a dedicated subfolder for their examples inside the relevant top-level domain folder (for example, `lab/my-feature-examples/...`).
+## Validation Status (Errors)
 
-## Pull Request Validation
+| Subfolder | Status | Errors |
+| --- | --- | ---: |
+| `lab/de-mii-examples` | ✅ | 0 |
+| `lab/de-mii-examples-test` | ✅ | 0 |
 
-A GitHub Actions workflow (`FHIR Validation`) validates changes in pull requests.
-
-Validation behavior:
-
-1. Detects changed files in the PR.
-2. Selects changed top-level spec folders from: `base`, `eps`, `lab`, `mpd`.
-3. For each changed folder path in those domains, collects all `*.json` and `*.xml` files recursively from that folder.
-4. Runs a precheck: each resource must have `meta.profile`, and at least one profile entry must start with `http://hl7.eu/fhir/`.
-5. Runs the Java FHIR validator with:
-   - `-allow-example-urls true`
-   - `-html-output validation.html`
-   - `-output validation.json`
-   - `-show-message-ids`
-   - `-extension any`
-   - `-display-issues-are-warnings`
-   - one `-resolution-context` per directory that contains changed/new content
-   - required EHDS IG packages via `-ig`
-
-Note: `imaging/**` is currently excluded from CI validation due to an API dependency issue.
-
-Loaded IG packages:
-
-- `hl7.fhir.eu.mpd#1.0.0`
-- `hl7.fhir.eu.laboratory#2.0.0`
-- `hl7.fhir.eu.imaging#current`
-- `hl7.fhir.eu.eps#current`
-- `hl7.fhir.eu.hdr#current`
-- `hl7.fhir.eu.base#2.0.0`
-
-### Validation Outputs in PRs
-
-- A sticky PR comment is posted by a dedicated `workflow_run` workflow after `FHIR Validation` completes.
-- The comment content is based on the rendered validation summary artifact and includes a download link to the HTML artifact.
-- Dependabot PRs are excluded from sticky comment posting.
-- GitHub annotation output from the renderer.
-- A downloadable HTML artifact: `fhir-validation-html-report` (`validation.html`).
-
-## Failure Conditions
-
-The `FHIR Validation` check fails when:
-- at least one resource is missing `meta.profile`
-- no `meta.profile` entry starts with `http://hl7.eu/fhir/` for at least one resource
-- the Java validator reports errors (non-zero exit code)
-
-## Local Validation Example
-
-You can run a local validation manually with:
-
-```bash
-java -jar validator_cli.jar \
-  -resolution-context lab/my-feature-examples \
-  -resolution-context lab/my-feature-examples/subset-a \
-  -ig hl7.fhir.eu.mpd#1.0.0 \
-  -ig hl7.fhir.eu.laboratory#2.0.0 \
-  -ig hl7.fhir.eu.eps#current \
-  -ig hl7.fhir.eu.hdr#current \
-  -ig hl7.fhir.eu.base#2.0.0 \
-  -allow-example-urls true \
-  -html-output validation.html \
-  -output validation.json \
-  -show-message-ids \
-  -extension any \
-  -display-issues-are-warnings \
-  lab/my-feature-examples/Observation-example-1.json \
-  lab/my-feature-examples/subset-a/Observation-example-2.xml
-```
-
-Adjust `-resolution-context` and input files to your actual changed directories and files.
+> Status values are automatically recalculated on `main` by the `Main Validation + README` workflow.
