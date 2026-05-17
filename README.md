@@ -65,7 +65,6 @@ java -jar validator_cli.jar \
   -resolution-context lab/my-feature-examples/subset-a \
   -ig hl7.fhir.eu.mpd#1.0.0 \
   -ig hl7.fhir.eu.laboratory#2.0.0 \
-  -ig hl7.fhir.eu.imaging#current \
   -ig hl7.fhir.eu.eps#current \
   -ig hl7.fhir.eu.hdr#current \
   -ig hl7.fhir.eu.base#2.0.0 \
