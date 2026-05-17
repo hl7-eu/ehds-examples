@@ -320,7 +320,7 @@ jobs:
       - name: Render validation summary
         id: render_summary
         if: steps.collect_files.outputs.has_target_files == 'true'
-        continue-on-error: true
+        continue-on-error: false
         uses: patrick-werner/validation-outcome-markdown-renderer@v1
         with:
           bundle-file: validation.json
