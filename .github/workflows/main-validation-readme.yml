@@ -414,7 +414,8 @@ jobs:
                 echo "- \`$folder/\`"
                 while IFS= read -r subdir; do
                   [[ -z "$subdir" ]] && continue
-                  echo "  - \`$subdir/\`"
+                  rel_subdir="${subdir#${folder}/}"
+                  echo "  - \`${rel_subdir}/\`"
                 done < <(find "$folder" -mindepth 1 -type d | sort)
               else
                 echo "- \`$folder/\` (missing)"

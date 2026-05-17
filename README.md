@@ -10,8 +10,8 @@ This README is generated from `main` branch validation results.
 - `eps/`
 - `hdr/`
 - `lab/`
-  - `lab/de-mii-examples/`
-  - `lab/de-mii-examples-test/`
+  - `de-mii-examples/`
+  - `de-mii-examples-test/`
 - `mpd/`
 
 ## Validation Status (Errors)
