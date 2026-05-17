@@ -8,7 +8,7 @@ on:
 permissions:
   contents: read
   issues: write
-  pull-requests: read
+  pull-requests: write
   actions: read
 
 jobs:
@@ -26,16 +26,8 @@ jobs:
           REPOSITORY: ${{ github.repository }}
           RUN_ID: ${{ github.event.workflow_run.id }}
           RUN_URL: ${{ github.event.workflow_run.html_url }}
-          EVENT_PATH: ${{ github.event_path }}
         run: |
           set -euo pipefail
-
-          PR_NUMBER="$(jq -r '.workflow_run.pull_requests[0].number // empty' "$EVENT_PATH")"
-
-          if [[ -z "$PR_NUMBER" ]]; then
-            echo "has_pr=false" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
 
           mkdir -p .ci-comment
           COMMENT_FILE=".ci-comment/pr-summary.md"
@@ -45,8 +37,30 @@ jobs:
             -H "Accept: application/vnd.github+json" \
             "https://api.github.com/repos/$REPOSITORY/actions/runs/$RUN_ID/artifacts")"
 
+          META_ARTIFACT_ID="$(echo "$ARTIFACTS_JSON" | jq -r '.artifacts[] | select(.name == "fhir-validation-pr-meta" and .expired == false) | .id' | head -n 1)"
           SUMMARY_ARTIFACT_ID="$(echo "$ARTIFACTS_JSON" | jq -r '.artifacts[] | select(.name == "fhir-validation-pr-summary" and .expired == false) | .id' | head -n 1)"
           HTML_ARTIFACT_ID="$(echo "$ARTIFACTS_JSON" | jq -r '.artifacts[] | select(.name == "fhir-validation-html-report" and .expired == false) | .id' | head -n 1)"
+
+          if [[ -z "$META_ARTIFACT_ID" ]]; then
+            echo "No PR metadata artifact found."
+            echo "has_pr=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          curl -fsSL \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/$REPOSITORY/actions/artifacts/$META_ARTIFACT_ID/zip" \
+            -o .ci-comment/pr-meta.zip
+
+          unzip -qo .ci-comment/pr-meta.zip -d .ci-comment
+
+          PR_NUMBER="$(jq -r '.pr_number // empty' .ci-comment/pr-meta.json)"
+          if [[ -z "$PR_NUMBER" || "$PR_NUMBER" == "null" ]]; then
+            echo "No PR number found in metadata artifact."
+            echo "has_pr=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
 
           if [[ -n "$SUMMARY_ARTIFACT_ID" ]]; then
             curl -fsSL \

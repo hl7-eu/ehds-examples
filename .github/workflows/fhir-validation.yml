@@ -341,6 +341,27 @@ jobs:
               > pr-summary.md
           fi
 
+      - name: Write PR metadata
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mkdir -p .ci
+          jq -n \
+            --arg pr_number "${{ github.event.pull_request.number }}" \
+            --arg head_sha "${{ github.event.pull_request.head.sha }}" \
+            '{pr_number: $pr_number, head_sha: $head_sha}' \
+            > .ci/pr-meta.json
+
+      - name: Upload PR metadata artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fhir-validation-pr-meta
+          path: .ci/pr-meta.json
+          if-no-files-found: error
+
       - name: Upload PR summary artifact
         id: upload_summary_report
         if: always() && steps.collect_files.outputs.has_target_files == 'true'
