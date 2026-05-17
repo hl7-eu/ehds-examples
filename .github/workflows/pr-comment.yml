@@ -131,16 +131,20 @@ jobs:
             ERRORS_ROWS_FILE=".ci-comment/errors-only-rows.md"
             : > "$ERRORS_ROWS_FILE"
             awk '
-              BEGIN { in_table=0 }
+              BEGIN { in_table=0; FS="\\|" }
               /^\|[[:space:]]*File[[:space:]]*\|/ { in_table=1; next }
               {
                 if (in_table==1) {
                   if ($0 ~ /^\|/) {
                     if ($0 ~ /^ *\|[[:space:]]*---/) next
+                    # Markdown table columns are pipe-separated:
+                    # | File | Severity | Details | Location | Code | MessageId |
                     sev=$3
                     gsub(/^[ \t]+|[ \t]+$/, "", sev)
+                    # Remove emoji marker when present, keep label.
+                    gsub(/❌[ \t]*/, "", sev)
                     sev_upper=toupper(sev)
-                    if (sev_upper ~ /ERROR/) print
+                    if (sev_upper ~ /^ERROR$/) print
                     next
                   }
                   in_table=0
