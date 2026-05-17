@@ -11,7 +11,6 @@ This README is generated from `main` branch validation results.
 - `hdr/`
 - `lab/`
   - `lab/de-mii-examples/`
-  - `lab/de-mii-examples-test/`
 - `mpd/`
 
 ## Validation Status (Errors)
@@ -19,6 +18,5 @@ This README is generated from `main` branch validation results.
 | Subfolder | Status | Errors |
 | --- | --- | ---: |
 | `lab/de-mii-examples` | ✅ | 0 |
-| `lab/de-mii-examples-test` | ✅ | 0 |
 
 > Status values are automatically recalculated on `main` by the `Main Validation + README` workflow.
