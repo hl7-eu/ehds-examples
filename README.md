@@ -10,11 +10,13 @@ This README is generated from `main` branch validation results.
 - `base/`
 - `eps/`
   - `Sensotrend/`
+  - `au-examples-connectathon-2026-05/`
   - `epic/`
 - `hdr/`
 - `imaging/` (missing)
 - `lab/`
   - `de-mii-examples/`
+  - `v2-to-fhir-fml-conversion-fyrstain/`
 - `mpd/`
 
 ## Validation Status (Errors)
@@ -22,7 +24,9 @@ This README is generated from `main` branch validation results.
 | Subfolder | Status | Errors | Warnings | Information |
 | --- | --- | ---: | ---: | ---: |
 | `eps/Sensotrend` | ✅ | 0 | 264 | 736 |
-| `eps/epic` | ❌ | 1 | 55 | 55 |
+| `eps/au-examples-connectathon-2026-05` | ❌ | 43 | 77 | 132 |
+| `eps/epic` | ❌ | 1 | 60 | 55 |
 | `lab/de-mii-examples` | ✅ | 0 | 20 | 15 |
+| `lab/v2-to-fhir-fml-conversion-fyrstain` | ❌ | 85 | 72 | 280 |
 
 > Status values are automatically recalculated on `main` by the `Main Validation + README` workflow.
