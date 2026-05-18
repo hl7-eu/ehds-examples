@@ -230,7 +230,7 @@ jobs:
       - name: Restore cached validator
         if: steps.collect_files.outputs.has_target_files == 'true'
         id: validator_cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: .cache/fhir-validator/validator_cli.jar
           key: ${{ runner.os }}-${{ steps.validator_meta.outputs.cache_key }}
