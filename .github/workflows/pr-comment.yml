@@ -69,6 +69,7 @@ jobs:
 
           META_ARTIFACT_ID="$(echo "$ARTIFACTS_JSON" | jq -r '.artifacts[] | select(.name == "fhir-validation-pr-meta" and .expired == false) | .id' | head -n 1)"
           SUMMARY_ARTIFACT_ID="$(echo "$ARTIFACTS_JSON" | jq -r '.artifacts[] | select(.name == "fhir-validation-pr-summary" and .expired == false) | .id' | head -n 1)"
+          PRECHECK_ARTIFACT_ID="$(echo "$ARTIFACTS_JSON" | jq -r '.artifacts[] | select(.name == "fhir-validation-precheck-summary" and .expired == false) | .id' | head -n 1)"
           HTML_ARTIFACT_ID="$(echo "$ARTIFACTS_JSON" | jq -r '.artifacts[] | select(.name == "fhir-validation-html-report" and .expired == false) | .id' | head -n 1)"
 
           if [[ -z "$META_ARTIFACT_ID" ]]; then
@@ -133,6 +134,18 @@ jobs:
             fi
           fi
 
+          PRECHECK_SUMMARY_FILE=""
+          if [[ -n "$PRECHECK_ARTIFACT_ID" ]]; then
+            mkdir -p .ci-comment/source-precheck
+            curl -fsSL \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/$REPOSITORY/actions/artifacts/$PRECHECK_ARTIFACT_ID/zip" \
+              -o .ci-comment/precheck-summary.zip
+            unzip -qo .ci-comment/precheck-summary.zip -d .ci-comment/source-precheck
+            PRECHECK_SUMMARY_FILE="$(find .ci-comment/source-precheck -type f -name 'precheck-summary.md' | head -n 1 || true)"
+          fi
+
           # Prefer full renderer summary first.
           if [[ -s "$FULL_SUMMARY_FILE" ]]; then
             cp "$FULL_SUMMARY_FILE" "$COMMENT_FILE"
@@ -168,6 +181,7 @@ jobs:
           echo "html_artifact_url=$HTML_ARTIFACT_URL" >> "$GITHUB_OUTPUT"
           echo "run_url=$RUN_URL" >> "$GITHUB_OUTPUT"
           echo "full_summary_file=$FULL_SUMMARY_FILE" >> "$GITHUB_OUTPUT"
+          echo "precheck_summary_file=$PRECHECK_SUMMARY_FILE" >> "$GITHUB_OUTPUT"
 
           echo "has_pr=true" >> "$GITHUB_OUTPUT"
           echo "pr_number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
@@ -190,6 +204,7 @@ jobs:
           COMMENT_FILE=".ci-comment/pr-summary.md"
           FINAL_FILE=".ci-comment/pr-summary-final.md"
           FULL_FILE="${{ steps.build_comment.outputs.full_summary_file }}"
+          PRECHECK_FILE="${{ steps.build_comment.outputs.precheck_summary_file }}"
           FILTERED_RENDERED_FILE=".ci-comment/pr-summary-errors-only-rendered.md"
           MAX_COMMENT_BYTES=62000
           HTML_ARTIFACT_URL="${{ steps.build_comment.outputs.html_artifact_url }}"
@@ -224,6 +239,15 @@ jobs:
               '' \
               'No validation summary artifact was available for this run.' \
               > "$FINAL_FILE"
+          fi
+
+          if [[ -n "$PRECHECK_FILE" && -s "$PRECHECK_FILE" ]] && grep -q 'PRECHECK_STATUS:FAILED' "$PRECHECK_FILE"; then
+            {
+              cat "$PRECHECK_FILE"
+              printf '\n---\n\n'
+              cat "$FINAL_FILE"
+            } > .ci-comment/pr-summary-with-precheck.md
+            mv .ci-comment/pr-summary-with-precheck.md "$FINAL_FILE"
           fi
 
           printf '\n## Artifacts\n\n[Download `fhir-validation-html-report` (includes `validation.html` and `validation.json`)](%s)\n' "$HTML_ARTIFACT_URL" >> "$FINAL_FILE"
