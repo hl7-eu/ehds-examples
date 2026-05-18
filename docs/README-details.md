@@ -32,7 +32,7 @@ Validation behavior:
    - `-show-message-ids`
    - `-extension any`
    - `-display-issues-are-warnings`
-   - one `-resolution-context` per directory that contains changed/new content
+   - one `-resolution-context` per directory (including subdirectories) that contains JSON/XML content in the validated PR scope
    - required EHDS IG packages via `-ig`
 
 Loaded IG packages:

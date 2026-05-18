@@ -38,8 +38,8 @@ jobs:
 
           FOLDERS=(base eps hdr imaging lab mpd)
           FILE_COUNT=0
-          CONTEXT_COUNT=0
           declare -A SEEN_GROUPS=()
+          declare -A SEEN_RESOLUTION_CONTEXTS=()
 
           for folder in "${FOLDERS[@]}"; do
             echo "$folder" >> .ci/folder-order.txt
@@ -47,9 +47,6 @@ jobs:
             if [[ ! -d "$folder" ]]; then
               continue
             fi
-
-            echo "$folder" >> .ci/resolution-contexts.txt
-            CONTEXT_COUNT=$((CONTEXT_COUNT + 1))
 
             while IFS= read -r subdir; do
               [[ -z "$subdir" ]] && continue
@@ -64,6 +61,12 @@ jobs:
               [[ -z "$file" ]] && continue
               echo "$file" >> .ci/target-files.txt
               FILE_COUNT=$((FILE_COUNT + 1))
+
+              context_dir="$(dirname "$file")"
+              if [[ -n "$context_dir" && -z "${SEEN_RESOLUTION_CONTEXTS[$context_dir]:-}" ]]; then
+                echo "$context_dir" >> .ci/resolution-contexts.txt
+                SEEN_RESOLUTION_CONTEXTS["$context_dir"]=1
+              fi
 
               rest="${file#${folder}/}"
               if [[ "$rest" == */* ]]; then
@@ -91,7 +94,7 @@ jobs:
             echo "target_file_count=$FILE_COUNT" >> "$GITHUB_OUTPUT"
           fi
 
-          if [[ $CONTEXT_COUNT -eq 0 ]]; then
+          if [[ ! -s .ci/resolution-contexts.txt ]]; then
             echo "No resolution contexts available."
           fi
 

@@ -77,6 +77,7 @@ jobs:
           mkdir -p .ci
           : > .ci/target-files.txt
           : > .ci/changed-folders.txt
+          : > .ci/resolution-contexts.txt
 
           BASE_SHA="${{ github.event.pull_request.base.sha }}"
           HEAD_SHA="${{ github.event.pull_request.head.sha }}"
@@ -89,8 +90,9 @@ jobs:
             [lab]=1
             [mpd]=1
           )
-          declare -A SEEN_CONTEXTS=()
+          declare -A SEEN_CHANGED_CONTEXTS=()
           declare -A SEEN_FILES=()
+          declare -A SEEN_RESOLUTION_CONTEXTS=()
 
           # First pass: collect changed directories inside tracked top-level folders.
           while IFS= read -r path; do
@@ -102,9 +104,9 @@ jobs:
             fi
 
             context_dir="$(dirname "$path")"
-            if [[ -n "$context_dir" && -z "${SEEN_CONTEXTS[$context_dir]:-}" ]]; then
+            if [[ -n "$context_dir" && -z "${SEEN_CHANGED_CONTEXTS[$context_dir]:-}" ]]; then
               echo "$context_dir" >> .ci/changed-folders.txt
-              SEEN_CONTEXTS["$context_dir"]=1
+              SEEN_CHANGED_CONTEXTS["$context_dir"]=1
             fi
           done < <(git diff --name-only "$BASE_SHA" "$HEAD_SHA" || true)
 
@@ -128,6 +130,12 @@ jobs:
               echo "$file" >> .ci/target-files.txt
               SEEN_FILES["$file"]=1
               FILE_COUNT=$((FILE_COUNT + 1))
+
+              file_context_dir="$(dirname "$file")"
+              if [[ -n "$file_context_dir" && -z "${SEEN_RESOLUTION_CONTEXTS[$file_context_dir]:-}" ]]; then
+                echo "$file_context_dir" >> .ci/resolution-contexts.txt
+                SEEN_RESOLUTION_CONTEXTS["$file_context_dir"]=1
+              fi
             done < <(find "$context_dir" -type f \( -name '*.json' -o -name '*.xml' \) | sort)
           done < .ci/changed-folders.txt
 
@@ -300,10 +308,10 @@ jobs:
 
           declare -a VALIDATOR_ARGS=()
 
-          while IFS= read -r folder; do
-            [[ -z "$folder" ]] && continue
-            VALIDATOR_ARGS+=("-resolution-context" "$folder")
-          done < .ci/changed-folders.txt
+          while IFS= read -r context_dir; do
+            [[ -z "$context_dir" ]] && continue
+            VALIDATOR_ARGS+=("-resolution-context" "$context_dir")
+          done < .ci/resolution-contexts.txt
 
           VALIDATOR_ARGS+=("-ig" "hl7.fhir.eu.mpd#current")
           VALIDATOR_ARGS+=("-ig" "hl7.fhir.eu.laboratory#2.0.0")
