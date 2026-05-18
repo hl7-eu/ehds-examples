@@ -13,7 +13,7 @@ This README is generated from `main` branch validation results.
   - `au-examples-connectathon-2026-05/`
   - `epic/`
 - `hdr/`
-- `imaging/` (missing)
+- `imaging/`
 - `lab/`
   - `de-mii-examples/`
   - `v2-to-fhir-fml-conversion-fyrstain/`
