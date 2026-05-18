@@ -148,7 +148,6 @@ jobs:
           echo "No relevant FHIR JSON/XML changes were detected in tracked spec folders. Validation skipped." >> "$GITHUB_STEP_SUMMARY"
 
       - name: Validate meta.profile presence and prefix
-        id: precheck
         if: steps.collect_files.outputs.has_target_files == 'true'
         shell: bash
         run: |
@@ -157,8 +156,6 @@ jobs:
           REQUIRED_PREFIX="http://hl7.eu/fhir/"
           MISSING_PROFILE=()
           MISSING_REQUIRED_PREFIX=()
-          : > .ci/precheck-missing-profile.txt
-          : > .ci/precheck-missing-prefix.txt
 
           while IFS= read -r file; do
             [[ -z "$file" ]] && continue
@@ -188,7 +185,6 @@ jobs:
 
             if [[ -z "$PROFILE_LINES" ]]; then
               MISSING_PROFILE+=("$file")
-              echo "$file" >> .ci/precheck-missing-profile.txt
               continue
             fi
 
@@ -203,7 +199,6 @@ jobs:
 
             if [[ "$HAS_REQUIRED_PREFIX" != "true" ]]; then
               MISSING_REQUIRED_PREFIX+=("$file")
-              echo "$file" >> .ci/precheck-missing-prefix.txt
             fi
           done < .ci/target-files.txt
 
@@ -228,18 +223,13 @@ jobs:
               echo
             fi
 
-            echo "precheck_exit_code=1" >> "$GITHUB_OUTPUT"
-            echo "missing_profile_count=${#MISSING_PROFILE[@]}" >> "$GITHUB_OUTPUT"
-            echo "missing_required_prefix_count=${#MISSING_REQUIRED_PREFIX[@]}" >> "$GITHUB_OUTPUT"
-          else
-            echo "meta.profile precheck passed for all candidate resources."
-            echo "precheck_exit_code=0" >> "$GITHUB_OUTPUT"
-            echo "missing_profile_count=0" >> "$GITHUB_OUTPUT"
-            echo "missing_required_prefix_count=0" >> "$GITHUB_OUTPUT"
+            exit 1
           fi
 
+          echo "meta.profile precheck passed for all candidate resources."
+
       - name: Set up Java
-        if: steps.collect_files.outputs.has_target_files == 'true' && steps.precheck.outputs.precheck_exit_code == '0'
+        if: steps.collect_files.outputs.has_target_files == 'true'
         uses: actions/setup-java@v5
         with:
           distribution: temurin
@@ -247,7 +237,7 @@ jobs:
 
       - name: Resolve validator download URL
         id: validator_meta
-        if: steps.collect_files.outputs.has_target_files == 'true' && steps.precheck.outputs.precheck_exit_code == '0'
+        if: steps.collect_files.outputs.has_target_files == 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -273,7 +263,7 @@ jobs:
           echo "cache_key=validator-cli-${CACHE_SUFFIX}" >> "$GITHUB_OUTPUT"
 
       - name: Restore cached validator
-        if: steps.collect_files.outputs.has_target_files == 'true' && steps.precheck.outputs.precheck_exit_code == '0'
+        if: steps.collect_files.outputs.has_target_files == 'true'
         id: validator_cache
         uses: actions/cache@v5
         with:
@@ -283,7 +273,7 @@ jobs:
             ${{ runner.os }}-validator-cli-
 
       - name: Download validator if cache miss
-        if: steps.collect_files.outputs.has_target_files == 'true' && steps.precheck.outputs.precheck_exit_code == '0' && steps.validator_cache.outputs.cache-hit != 'true'
+        if: steps.collect_files.outputs.has_target_files == 'true' && steps.validator_cache.outputs.cache-hit != 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -293,7 +283,7 @@ jobs:
 
       - name: Run Java FHIR validator
         id: run_validator
-        if: steps.collect_files.outputs.has_target_files == 'true' && steps.precheck.outputs.precheck_exit_code == '0'
+        if: steps.collect_files.outputs.has_target_files == 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -333,7 +323,7 @@ jobs:
 
       - name: Render validation summary
         id: render_summary
-        if: steps.collect_files.outputs.has_target_files == 'true' && steps.precheck.outputs.precheck_exit_code == '0'
+        if: steps.collect_files.outputs.has_target_files == 'true'
         continue-on-error: false
         uses: patrick-werner/validation-outcome-markdown-renderer@v1
         with:
@@ -351,86 +341,10 @@ jobs:
             printf '%s\n' \
               '# FHIR Validation Summary' \
               '' \
-              'The markdown summary could not be rendered from `validation.json` or validation was skipped due to precheck issues.' \
+              'The markdown summary could not be rendered from `validation.json`.' \
               'Please check the workflow logs and the uploaded HTML artifact for details.' \
               > pr-summary.md
           fi
-
-      - name: Build precheck summary
-        if: always() && steps.collect_files.outputs.has_target_files == 'true'
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          PRECHECK_EXIT="${{ steps.precheck.outputs.precheck_exit_code }}"
-          MISSING_PROFILE_COUNT="${{ steps.precheck.outputs.missing_profile_count }}"
-          MISSING_PREFIX_COUNT="${{ steps.precheck.outputs.missing_required_prefix_count }}"
-          REQUIRED_PREFIX="http://hl7.eu/fhir/"
-          MAX_LIST_ITEMS=80
-
-          if [[ -z "$PRECHECK_EXIT" ]]; then
-            PRECHECK_EXIT="0"
-          fi
-          if [[ -z "$MISSING_PROFILE_COUNT" ]]; then
-            MISSING_PROFILE_COUNT="0"
-          fi
-          if [[ -z "$MISSING_PREFIX_COUNT" ]]; then
-            MISSING_PREFIX_COUNT="0"
-          fi
-
-          {
-            echo "## meta.profile precheck"
-            echo
-            if [[ "$PRECHECK_EXIT" == "0" ]]; then
-              echo "<!-- PRECHECK_STATUS:PASSED -->"
-              echo
-              echo "✅ Passed: every checked resource contains \`meta.profile\` and has at least one entry starting with \`${REQUIRED_PREFIX}\`."
-            else
-              echo "<!-- PRECHECK_STATUS:FAILED -->"
-              echo
-              echo "❌ Failed."
-              echo
-              echo "- Missing \`meta.profile\`: ${MISSING_PROFILE_COUNT}"
-              echo "- No \`meta.profile\` entry with required prefix \`${REQUIRED_PREFIX}\`: ${MISSING_PREFIX_COUNT}"
-              echo
-
-              if [[ -s .ci/precheck-missing-profile.txt ]]; then
-                echo "### Missing \`meta.profile\`"
-                count=0
-                while IFS= read -r file; do
-                  [[ -z "$file" ]] && continue
-                  echo "- \`$file\`"
-                  count=$((count + 1))
-                  if [[ "$count" -ge "$MAX_LIST_ITEMS" ]]; then
-                    break
-                  fi
-                done < .ci/precheck-missing-profile.txt
-                total="$(wc -l < .ci/precheck-missing-profile.txt | tr -d ' ')"
-                if [[ "$total" -gt "$MAX_LIST_ITEMS" ]]; then
-                  echo "- _...truncated (${MAX_LIST_ITEMS} of ${total})_"
-                fi
-                echo
-              fi
-
-              if [[ -s .ci/precheck-missing-prefix.txt ]]; then
-                echo "### No required prefix in \`meta.profile\`"
-                count=0
-                while IFS= read -r file; do
-                  [[ -z "$file" ]] && continue
-                  echo "- \`$file\`"
-                  count=$((count + 1))
-                  if [[ "$count" -ge "$MAX_LIST_ITEMS" ]]; then
-                    break
-                  fi
-                done < .ci/precheck-missing-prefix.txt
-                total="$(wc -l < .ci/precheck-missing-prefix.txt | tr -d ' ')"
-                if [[ "$total" -gt "$MAX_LIST_ITEMS" ]]; then
-                  echo "- _...truncated (${MAX_LIST_ITEMS} of ${total})_"
-                fi
-                echo
-              fi
-            fi
-          } > precheck-summary.md
 
       - name: Write PR metadata
         if: always()
@@ -462,14 +376,6 @@ jobs:
           path: pr-summary.md
           if-no-files-found: warn
 
-      - name: Upload precheck summary artifact
-        if: always() && steps.collect_files.outputs.has_target_files == 'true'
-        uses: actions/upload-artifact@v7
-        with:
-          name: fhir-validation-precheck-summary
-          path: precheck-summary.md
-          if-no-files-found: warn
-
       - name: Upload validation reports (HTML + JSON)
         id: upload_html_report
         if: always() && steps.collect_files.outputs.has_target_files == 'true'
@@ -487,20 +393,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          PRECHECK_EXIT="${{ steps.precheck.outputs.precheck_exit_code }}"
           EXIT_CODE="${{ steps.run_validator.outputs.validator_exit_code }}"
-          if [[ -z "$PRECHECK_EXIT" ]]; then
-            PRECHECK_EXIT="0"
-          fi
-          if [[ -z "$EXIT_CODE" ]]; then
-            EXIT_CODE="0"
-          fi
-
-          if [[ "$PRECHECK_EXIT" != "0" ]]; then
-            echo "FHIR validation precheck failed (meta.profile requirements not met)."
-            exit 1
-          fi
-
           if [[ "$EXIT_CODE" != "0" ]]; then
             echo "FHIR validation finished with errors (exit code: $EXIT_CODE)."
             exit 1

@@ -2,15 +2,16 @@
   "resourceType": "Bundle",
   "meta": {
     "profile": [
+      "http://hl7.org/fhir/uv/ips/StructureDefinition/Bundle-uv-ips",
       "http://hl7.eu/fhir/eps/StructureDefinition/bundle-eu-eps"
     ]
   },
   "identifier": {
     "system": "urn:ietf:rfc:3986",
-    "value": "urn:uuid:7cb9e5d6-ef30-4cd3-8763-3cb4e7f74514"
+        "value": "urn:uuid:7cb9e5d6-ef30-4cd3-8763-3cb4e7f74514"
   },
   "type": "document",
-  "timestamp": "2026-05-17T14:53:41Z",
+    "timestamp": "2026-05-17T14:53:41Z",
   "entry": [
     {
       "fullUrl": "https://fhir.epic.com/interconnect-fhir-oauth/api/FHIR/R4/Composition/f45f8nfKW-noKwDpxQo0UIQ4",
@@ -36,7 +37,7 @@
           "reference": "Patient/erXuFYUfucBZaryVksYEcMg3",
           "display": "Lopez, Camila Maria"
         },
-        "date": "2026-05-17T14:53:41Z",
+                "date": "2026-05-17T14:53:41Z",
         "author": [
           {
             "reference": "Organization/ePqMmiCU9E1xOUefB9e7Plw3",
@@ -141,266 +142,266 @@
                 "reference": "Immunization/eEAE--XrkYnFv04FWNZG8Aw3"
               }
             ]
-          },
-          {
-            "title": "History of Procedures Document",
-            "code": {
-              "coding": [
-                {
-                  "system": "http://loinc.org",
-                  "code": "47519-4",
-                  "display": "History of Procedures Document"
-                }
-              ]
-            },
-            "text": {
-              "status": "empty",
-              "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">No information available for History of Procedures Document.</div>"
-            },
-            "emptyReason": {
-              "coding": [
-                {
-                  "system": "http://terminology.hl7.org/CodeSystem/list-empty-reason",
-                  "code": "unavailable",
-                  "display": "Unavailable"
-                }
-              ],
-              "text": "No data available from source system for this section."
-            }
-          },
-          {
-            "title": "Relevant diagnostic tests/laboratory data Narrative",
-            "code": {
-              "coding": [
-                {
-                  "system": "http://loinc.org",
-                  "code": "30954-2",
-                  "display": "Relevant diagnostic tests/laboratory data Narrative"
-                }
-              ]
-            },
-            "text": {
-              "status": "empty",
-              "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">No information available for Relevant diagnostic tests/laboratory data Narrative.</div>"
-            },
-            "emptyReason": {
-              "coding": [
-                {
-                  "system": "http://terminology.hl7.org/CodeSystem/list-empty-reason",
-                  "code": "unavailable",
-                  "display": "Unavailable"
-                }
-              ],
-              "text": "No data available from source system for this section."
-            }
-          },
-          {
-            "title": "History of medical device use",
-            "code": {
-              "coding": [
-                {
-                  "system": "http://loinc.org",
-                  "code": "46264-8",
-                  "display": "History of medical device use"
-                }
-              ]
-            },
-            "text": {
-              "status": "empty",
-              "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">No information available for History of medical device use.</div>"
-            },
-            "emptyReason": {
-              "coding": [
-                {
-                  "system": "http://terminology.hl7.org/CodeSystem/list-empty-reason",
-                  "code": "unavailable",
-                  "display": "Unavailable"
-                }
-              ],
-              "text": "No data available from source system for this section."
-            }
-          },
-          {
-            "title": "Vital signs",
-            "code": {
-              "coding": [
-                {
-                  "system": "http://loinc.org",
-                  "code": "8716-3",
-                  "display": "Vital signs"
-                }
-              ]
-            },
-            "text": {
-              "status": "empty",
-              "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">No information available for Vital signs.</div>"
-            },
-            "emptyReason": {
-              "coding": [
-                {
-                  "system": "http://terminology.hl7.org/CodeSystem/list-empty-reason",
-                  "code": "unavailable",
-                  "display": "Unavailable"
-                }
-              ],
-              "text": "No data available from source system for this section."
-            }
-          },
-          {
-            "title": "History of Past illness Narrative",
-            "code": {
-              "coding": [
-                {
-                  "system": "http://loinc.org",
-                  "code": "11348-0",
-                  "display": "History of Past illness Narrative"
-                }
-              ]
-            },
-            "text": {
-              "status": "empty",
-              "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">No information available for History of Past illness Narrative.</div>"
-            },
-            "emptyReason": {
-              "coding": [
-                {
-                  "system": "http://terminology.hl7.org/CodeSystem/list-empty-reason",
-                  "code": "unavailable",
-                  "display": "Unavailable"
-                }
-              ],
-              "text": "No data available from source system for this section."
-            }
-          },
-          {
-            "title": "Functional status assessment note",
-            "code": {
-              "coding": [
-                {
-                  "system": "http://loinc.org",
-                  "code": "47420-5",
-                  "display": "Functional status assessment note"
-                }
-              ]
-            },
-            "text": {
-              "status": "empty",
-              "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">No information available for Functional status assessment note.</div>"
-            },
-            "emptyReason": {
-              "coding": [
-                {
-                  "system": "http://terminology.hl7.org/CodeSystem/list-empty-reason",
-                  "code": "unavailable",
-                  "display": "Unavailable"
-                }
-              ],
-              "text": "No data available from source system for this section."
-            }
-          },
-          {
-            "title": "Plan of care note",
-            "code": {
-              "coding": [
-                {
-                  "system": "http://loinc.org",
-                  "code": "18776-5",
-                  "display": "Plan of care note"
-                }
-              ]
-            },
-            "text": {
-              "status": "empty",
-              "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">No information available for Plan of care note.</div>"
-            },
-            "emptyReason": {
-              "coding": [
-                {
-                  "system": "http://terminology.hl7.org/CodeSystem/list-empty-reason",
-                  "code": "unavailable",
-                  "display": "Unavailable"
-                }
-              ],
-              "text": "No data available from source system for this section."
-            }
-          },
-          {
-            "title": "Social history Narrative",
-            "code": {
-              "coding": [
-                {
-                  "system": "http://loinc.org",
-                  "code": "29762-2",
-                  "display": "Social history Narrative"
-                }
-              ]
-            },
-            "text": {
-              "status": "empty",
-              "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">No information available for Social history Narrative.</div>"
-            },
-            "emptyReason": {
-              "coding": [
-                {
-                  "system": "http://terminology.hl7.org/CodeSystem/list-empty-reason",
-                  "code": "unavailable",
-                  "display": "Unavailable"
-                }
-              ],
-              "text": "No data available from source system for this section."
-            }
-          },
-          {
-            "title": "History of pregnancies Narrative",
-            "code": {
-              "coding": [
-                {
-                  "system": "http://loinc.org",
-                  "code": "10162-6",
-                  "display": "History of pregnancies Narrative"
-                }
-              ]
-            },
-            "text": {
-              "status": "empty",
-              "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">No information available for History of pregnancies Narrative.</div>"
-            },
-            "emptyReason": {
-              "coding": [
-                {
-                  "system": "http://terminology.hl7.org/CodeSystem/list-empty-reason",
-                  "code": "unavailable",
-                  "display": "Unavailable"
-                }
-              ],
-              "text": "No data available from source system for this section."
-            }
-          },
-          {
-            "title": "Advance directives",
-            "code": {
-              "coding": [
-                {
-                  "system": "http://loinc.org",
-                  "code": "42348-3",
-                  "display": "Advance directives"
-                }
-              ]
-            },
-            "text": {
-              "status": "empty",
-              "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">No information available for Advance directives.</div>"
-            },
-            "emptyReason": {
-              "coding": [
-                {
-                  "system": "http://terminology.hl7.org/CodeSystem/list-empty-reason",
-                  "code": "unavailable",
-                  "display": "Unavailable"
-                }
-              ],
-              "text": "No data available from source system for this section."
-            }
+                    },
+                    {
+                        "title": "History of Procedures Document",
+                        "code": {
+                            "coding": [
+                                {
+                                    "system": "http://loinc.org",
+                                    "code": "47519-4",
+                                    "display": "History of Procedures Document"
+                                }
+                            ]
+                        },
+                        "text": {
+                            "status": "empty",
+                            "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">No information available for History of Procedures Document.</div>"
+                        },
+                        "emptyReason": {
+                            "coding": [
+                                {
+                                    "system": "http://terminology.hl7.org/CodeSystem/list-empty-reason",
+                                    "code": "unavailable",
+                                    "display": "Unavailable"
+                                }
+                            ],
+                            "text": "No data available from source system for this section."
+                        }
+                    },
+                    {
+                        "title": "Relevant diagnostic tests/laboratory data Narrative",
+                        "code": {
+                            "coding": [
+                                {
+                                    "system": "http://loinc.org",
+                                    "code": "30954-2",
+                                    "display": "Relevant diagnostic tests/laboratory data Narrative"
+                                }
+                            ]
+                        },
+                        "text": {
+                            "status": "empty",
+                            "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">No information available for Relevant diagnostic tests/laboratory data Narrative.</div>"
+                        },
+                        "emptyReason": {
+                            "coding": [
+                                {
+                                    "system": "http://terminology.hl7.org/CodeSystem/list-empty-reason",
+                                    "code": "unavailable",
+                                    "display": "Unavailable"
+                                }
+                            ],
+                            "text": "No data available from source system for this section."
+                        }
+                    },
+                    {
+                        "title": "History of medical device use",
+                        "code": {
+                            "coding": [
+                                {
+                                    "system": "http://loinc.org",
+                                    "code": "46264-8",
+                                    "display": "History of medical device use"
+                                }
+                            ]
+                        },
+                        "text": {
+                            "status": "empty",
+                            "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">No information available for History of medical device use.</div>"
+                        },
+                        "emptyReason": {
+                            "coding": [
+                                {
+                                    "system": "http://terminology.hl7.org/CodeSystem/list-empty-reason",
+                                    "code": "unavailable",
+                                    "display": "Unavailable"
+                                }
+                            ],
+                            "text": "No data available from source system for this section."
+                        }
+                    },
+                    {
+                        "title": "Vital signs",
+                        "code": {
+                            "coding": [
+                                {
+                                    "system": "http://loinc.org",
+                                    "code": "8716-3",
+                                    "display": "Vital signs"
+                                }
+                            ]
+                        },
+                        "text": {
+                            "status": "empty",
+                            "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">No information available for Vital signs.</div>"
+                        },
+                        "emptyReason": {
+                            "coding": [
+                                {
+                                    "system": "http://terminology.hl7.org/CodeSystem/list-empty-reason",
+                                    "code": "unavailable",
+                                    "display": "Unavailable"
+                                }
+                            ],
+                            "text": "No data available from source system for this section."
+                        }
+                    },
+                    {
+                        "title": "History of Past illness Narrative",
+                        "code": {
+                            "coding": [
+                                {
+                                    "system": "http://loinc.org",
+                                    "code": "11348-0",
+                                    "display": "History of Past illness Narrative"
+                                }
+                            ]
+                        },
+                        "text": {
+                            "status": "empty",
+                            "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">No information available for History of Past illness Narrative.</div>"
+                        },
+                        "emptyReason": {
+                            "coding": [
+                                {
+                                    "system": "http://terminology.hl7.org/CodeSystem/list-empty-reason",
+                                    "code": "unavailable",
+                                    "display": "Unavailable"
+                                }
+                            ],
+                            "text": "No data available from source system for this section."
+                        }
+                    },
+                    {
+                        "title": "Functional status assessment note",
+                        "code": {
+                            "coding": [
+                                {
+                                    "system": "http://loinc.org",
+                                    "code": "47420-5",
+                                    "display": "Functional status assessment note"
+                                }
+                            ]
+                        },
+                        "text": {
+                            "status": "empty",
+                            "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">No information available for Functional status assessment note.</div>"
+                        },
+                        "emptyReason": {
+                            "coding": [
+                                {
+                                    "system": "http://terminology.hl7.org/CodeSystem/list-empty-reason",
+                                    "code": "unavailable",
+                                    "display": "Unavailable"
+                                }
+                            ],
+                            "text": "No data available from source system for this section."
+                        }
+                    },
+                    {
+                        "title": "Plan of care note",
+                        "code": {
+                            "coding": [
+                                {
+                                    "system": "http://loinc.org",
+                                    "code": "18776-5",
+                                    "display": "Plan of care note"
+                                }
+                            ]
+                        },
+                        "text": {
+                            "status": "empty",
+                            "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">No information available for Plan of care note.</div>"
+                        },
+                        "emptyReason": {
+                            "coding": [
+                                {
+                                    "system": "http://terminology.hl7.org/CodeSystem/list-empty-reason",
+                                    "code": "unavailable",
+                                    "display": "Unavailable"
+                                }
+                            ],
+                            "text": "No data available from source system for this section."
+                        }
+                    },
+                    {
+                        "title": "Social history Narrative",
+                        "code": {
+                            "coding": [
+                                {
+                                    "system": "http://loinc.org",
+                                    "code": "29762-2",
+                                    "display": "Social history Narrative"
+                                }
+                            ]
+                        },
+                        "text": {
+                            "status": "empty",
+                            "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">No information available for Social history Narrative.</div>"
+                        },
+                        "emptyReason": {
+                            "coding": [
+                                {
+                                    "system": "http://terminology.hl7.org/CodeSystem/list-empty-reason",
+                                    "code": "unavailable",
+                                    "display": "Unavailable"
+                                }
+                            ],
+                            "text": "No data available from source system for this section."
+                        }
+                    },
+                    {
+                        "title": "History of pregnancies Narrative",
+                        "code": {
+                            "coding": [
+                                {
+                                    "system": "http://loinc.org",
+                                    "code": "10162-6",
+                                    "display": "History of pregnancies Narrative"
+                                }
+                            ]
+                        },
+                        "text": {
+                            "status": "empty",
+                            "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">No information available for History of pregnancies Narrative.</div>"
+                        },
+                        "emptyReason": {
+                            "coding": [
+                                {
+                                    "system": "http://terminology.hl7.org/CodeSystem/list-empty-reason",
+                                    "code": "unavailable",
+                                    "display": "Unavailable"
+                                }
+                            ],
+                            "text": "No data available from source system for this section."
+                        }
+                    },
+                    {
+                        "title": "Advance directives",
+                        "code": {
+                            "coding": [
+                                {
+                                    "system": "http://loinc.org",
+                                    "code": "42348-3",
+                                    "display": "Advance directives"
+                                }
+                            ]
+                        },
+                        "text": {
+                            "status": "empty",
+                            "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">No information available for Advance directives.</div>"
+                        },
+                        "emptyReason": {
+                            "coding": [
+                                {
+                                    "system": "http://terminology.hl7.org/CodeSystem/list-empty-reason",
+                                    "code": "unavailable",
+                                    "display": "Unavailable"
+                                }
+                            ],
+                            "text": "No data available from source system for this section."
+                        }
           }
         ],
         "meta": {
@@ -502,7 +503,7 @@
               "display": "Physician Family Medicine, MD"
             }
           }
-        ]
+                ]
       }
     },
     {
@@ -783,7 +784,7 @@
           "display": "Lopez, Camila Maria"
         },
         "onsetDateTime": "2005-09-20",
-        "recordedDate": "2019-05-28"
+                "recordedDate": "2019-05-28"
       }
     },
     {
@@ -855,7 +856,7 @@
               "text": "drospirenone-ethinyl estradiol (YAZ) 3-0.02 MG per tablet"
             }
           }
-        ]
+                ]
       }
     },
     {
@@ -917,7 +918,7 @@
             "postalCode": "53593-9179",
             "country": "United States of America"
           }
-        ]
+                ]
       }
     },
     {

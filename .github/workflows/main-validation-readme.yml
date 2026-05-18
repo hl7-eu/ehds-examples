@@ -19,7 +19,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -195,7 +195,7 @@ jobs:
 
       - name: Set up Java
         if: steps.collect_files.outputs.has_target_files == 'true'
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '21'
@@ -230,7 +230,7 @@ jobs:
       - name: Restore cached validator
         if: steps.collect_files.outputs.has_target_files == 'true'
         id: validator_cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: .cache/fhir-validator/validator_cli.jar
           key: ${{ runner.os }}-${{ steps.validator_meta.outputs.cache_key }}
@@ -543,7 +543,7 @@ jobs:
     steps:
       - name: Download main validation artifacts
         id: download_artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         continue-on-error: true
         with:
           name: main-validation-artifacts
@@ -605,7 +605,7 @@ jobs:
           } > .ci-pages/site/index.html
 
       - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: .ci-pages/site
 
